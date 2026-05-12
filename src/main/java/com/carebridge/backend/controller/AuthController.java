@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.carebridge.backend.dto.ApiResponse;
+import com.carebridge.backend.dto.LoginRequest;
+import com.carebridge.backend.dto.LoginResponse;
 // import com.carebridge.backend.dto.OtpVerifyRequest;
 import com.carebridge.backend.dto.RegisterRequest;
 import com.carebridge.backend.dto.VerifyAndRegisterRequest;
@@ -34,5 +36,10 @@ public class AuthController {
     @PostMapping("/resend")
     public ApiResponse resend(@RequestParam String email){
         return new ApiResponse(authService.resendOtp(email));
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest request){
+        return authService.login(request);
     }
 }

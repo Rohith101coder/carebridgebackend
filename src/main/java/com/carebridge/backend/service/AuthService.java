@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.carebridge.backend.dto.LoginRequest;
+import com.carebridge.backend.dto.LoginResponse;
 // import com.carebridge.backend.dto.OtpVerifyRequest;
 import com.carebridge.backend.dto.RegisterRequest;
 import com.carebridge.backend.dto.VerifyAndRegisterRequest;
@@ -12,6 +14,7 @@ import com.carebridge.backend.entity.Otp;
 import com.carebridge.backend.entity.User;
 import com.carebridge.backend.repository.OtpRepository;
 import com.carebridge.backend.repository.UserRepository;
+import com.carebridge.backend.util.JwtUtil;
 import com.carebridge.backend.util.OtpUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class AuthService {
     private final OtpRepository otpRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final JwtUtil jwtUtil;
 
     //generate and send otp
     public String register(RegisterRequest request){
@@ -102,6 +106,20 @@ public class AuthService {
         emailService.sendOtp(email, newOtp);
 
         return "OTP resent successfully";
+    }
+
+    public LoginResponse login(LoginRequest request){
+
+            User user = userRepository.findByEmail(request.getEmail())
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+                throw new RuntimeException("Invalid password");
+            }
+
+            String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+
+            return new LoginResponse(token);
     }
     
 }

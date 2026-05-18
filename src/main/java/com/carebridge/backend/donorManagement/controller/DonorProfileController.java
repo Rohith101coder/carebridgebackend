@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.carebridge.backend.donorManagement.dto.DonorProfileRequest;
+import com.carebridge.backend.donorManagement.dto.DonorResponse;
 import com.carebridge.backend.donorManagement.service.DonorProfileService;
 
 import jakarta.validation.Valid;
@@ -26,11 +27,11 @@ public class DonorProfileController {
         consumes = {"multipart/form-data"}
     )
 
-    public ResponseEntity<String> createDonorProfile(
+    public ResponseEntity<DonorResponse> createDonorProfile(
         @Valid @ModelAttribute DonorProfileRequest request
     ){
 
-        String response = donorProfileService.createDonorProfile(request);
+        DonorResponse response = donorProfileService.createDonorProfile(request);
 
         return ResponseEntity.ok(response);
     }

@@ -12,7 +12,11 @@ import com.carebridge.backend.authManagement.repository.UserRepository;
 import com.carebridge.backend.common.enums.DonorSubscriptionStatus;
 import com.carebridge.backend.common.enums.VerificationStatus;
 import com.carebridge.backend.donorManagement.dto.DonorProfileRequest;
+import com.carebridge.backend.donorManagement.dto.DonorResponse;
 import com.carebridge.backend.donorManagement.entity.DonorProfile;
+import com.carebridge.backend.donorManagement.exception.DonorProfileAlreadyExsistException;
+import com.carebridge.backend.donorManagement.exception.FileIssueException;
+import com.carebridge.backend.donorManagement.exception.UserNotFoundException;
 import com.carebridge.backend.donorManagement.repository.DonorProfileRepository;
 
 // import lombok.AllArgsConstructor;
@@ -26,9 +30,9 @@ public class DonorProfileService {
     
     private final DonorProfileRepository donorProfileRepository;
 
-    public String createDonorProfile(DonorProfileRequest request){
+    public DonorResponse createDonorProfile(DonorProfileRequest request){
 
-        try{
+        
 
             Authentication authentication = SecurityContextHolder
                                             .getContext()
@@ -36,10 +40,10 @@ public class DonorProfileService {
 
             String email = authentication.getName();
 
-            User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
+            User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User not found"));
 
                 if(donorProfileRepository.findByUser(user).isPresent()){
-                    throw new RuntimeException("Donor profile already exists");
+                    throw new DonorProfileAlreadyExsistException("Donor profile already exists");
                 }
 
             DonorProfile donor = new DonorProfile();
@@ -58,13 +62,21 @@ public class DonorProfileService {
 
             MultipartFile profilePic = request.getProfilePic();
             if(profilePic != null && !profilePic.isEmpty()){
-                 donor.setProfilePic(profilePic.getBytes());
+                 try {
+                    donor.setProfilePic(profilePic.getBytes());
+                 } catch (IOException e) {
+                  throw new FileIssueException("Fail to upload File");
+                 }
             }
 
             MultipartFile panPhoto = request.getPanPhoto();
 
             if(panPhoto!=null && !panPhoto.isEmpty()){
-                donor.setPanPhoto(panPhoto.getBytes());
+                try {
+                    donor.setPanPhoto(panPhoto.getBytes());
+                } catch (IOException e) {
+                   throw new FileIssueException("Fail to upload File");
+                }
             }
 
             donor.setDonorStatus(VerificationStatus.PENDING);
@@ -75,11 +87,9 @@ public class DonorProfileService {
 
             donorProfileRepository.save(donor);
 
-            return "Donor profile created successfully";
+            return new DonorResponse("Donor profile created successfully");
 
-        }catch(IOException e){
-            throw new RuntimeException("Failed to process images");
-        }
+       
 
 
 

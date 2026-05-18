@@ -34,4 +34,13 @@ public class GlobalExceptionHandler {
          ErrorResponse error = new ErrorResponse(HttpStatus.CONTENT_TOO_LARGE.value(), ex.getMessage(), request.getDescription(false).replace("uri=",""));
         return new ResponseEntity<>(error, HttpStatus.CONTENT_TOO_LARGE);
     }
+
+    @ExceptionHandler(DonorProfileNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDonorProfileNotFound(
+        DonorProfileNotFoundException ex,
+        WebRequest request
+    ){
+         ErrorResponse error = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), request.getDescription(false).replace("uri=",""));
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 }

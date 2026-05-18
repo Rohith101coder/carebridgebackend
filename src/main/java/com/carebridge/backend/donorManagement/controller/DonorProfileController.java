@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.carebridge.backend.donorManagement.dto.DonorProfileRequest;
+import com.carebridge.backend.donorManagement.dto.DonorProfileUpdateRequest;
 import com.carebridge.backend.donorManagement.dto.DonorResponse;
 import com.carebridge.backend.donorManagement.service.DonorProfileService;
 
@@ -35,5 +36,12 @@ public class DonorProfileController {
 
         return ResponseEntity.ok(response);
     }
+
     
+    public ResponseEntity<DonorResponse> updateDonorProfile(
+        @ModelAttribute DonorProfileUpdateRequest request
+    ){
+        DonorResponse response = donorProfileService.updateDonorProfile(request);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -9,5 +9,5 @@ import com.carebridge.backend.donorManagement.entity.DonorProfile;
 
 public interface DonorProfileRepository extends JpaRepository<DonorProfile, Long>{
     
-    Optional<User> findByUser(User user);
+    Optional<DonorProfile> findByUser(User user);
 }

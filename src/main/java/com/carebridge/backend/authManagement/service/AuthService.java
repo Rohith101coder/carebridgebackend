@@ -11,6 +11,14 @@ import com.carebridge.backend.authManagement.dto.LoginResponse;
 import com.carebridge.backend.authManagement.dto.RegisterRequest;
 import com.carebridge.backend.authManagement.dto.VerifyAndRegisterRequest;
 import com.carebridge.backend.authManagement.entity.User;
+import com.carebridge.backend.authManagement.exception.InvalidOTPException;
+import com.carebridge.backend.authManagement.exception.InvalidPasswordException;
+import com.carebridge.backend.authManagement.exception.OTPEmailNotFoundException;
+import com.carebridge.backend.authManagement.exception.OtpAlreadyUsedException;
+import com.carebridge.backend.authManagement.exception.OtpExpiredException;
+import com.carebridge.backend.authManagement.exception.OtpNotFoundException;
+import com.carebridge.backend.authManagement.exception.UserAlreadyRegisteredException;
+import com.carebridge.backend.authManagement.exception.UserNotFoundException;
 import com.carebridge.backend.authManagement.repository.UserRepository;
 import com.carebridge.backend.authManagement.util.JwtUtil;
 import com.carebridge.backend.notificationManagement.entity.Otp;
@@ -34,7 +42,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request){
 
         if(userRepository.findByEmail(request.getEmail()).isPresent()){
-            return new AuthResponse("Email already registered");
+            throw new UserAlreadyRegisteredException("Email already registered");
         }
 
         String otpCode = OtpUtil.generateOtp();
@@ -55,22 +63,22 @@ public class AuthService {
 
     //verify otp
 
-    public String verifyOtp(VerifyAndRegisterRequest request){
+    public AuthResponse verifyOtp(VerifyAndRegisterRequest request){
 
         Otp otp = otpRepository.findByEmail(request.getEmail())
-            .orElseThrow(()-> new RuntimeException("OTP not found"));
+            .orElseThrow(()-> new OtpNotFoundException("OTP not found"));
         
             if(otp.isUsed()){
-                throw new RuntimeException("OTP already used");
+                throw new OtpAlreadyUsedException("OTP already used");
             }
             if(otp.getExpiryTime().isBefore(LocalDateTime.now())){
-                throw new RuntimeException("OTP expired");
+                throw new OtpExpiredException("OTP expired");
             }
 
             if(!otp.getOtp().equals(request.getOtp())){
                 otp.setAttempts(otp.getAttempts()+1);
                 otpRepository.save(otp);
-                throw new RuntimeException("Invalid OTP");
+                throw new InvalidOTPException("Invalid OTP");
             }
 
             User user = User.builder()
@@ -87,13 +95,13 @@ public class AuthService {
             otp.setUsed(true);
             otpRepository.save(otp);
 
-            return "user registered successfully";
+            return new AuthResponse( "user registered successfully");
     }
 
-      public String resendOtp(String email) {
+      public AuthResponse resendOtp(String email) {
 
         Otp otp = otpRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("No OTP request found"));
+                .orElseThrow(() -> new OTPEmailNotFoundException("No OTP request found"));
 
         String newOtp = OtpUtil.generateOtp();
 
@@ -106,16 +114,16 @@ public class AuthService {
         System.out.println("Resent OTP: " + newOtp);
         emailService.sendOtp(email, newOtp);
 
-        return "OTP resent successfully";
+        return new AuthResponse("OTP resent successfully");
     }
 
     public LoginResponse login(LoginRequest request){
 
             User user = userRepository.findByEmail(request.getEmail())
-                        .orElseThrow(() -> new RuntimeException("User not found"));
+                        .orElseThrow(() -> new UserNotFoundException("User not found"));
 
             if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-                throw new RuntimeException("Invalid password");
+                throw new InvalidPasswordException("Invalid password");
             }
 
             String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());

@@ -12,7 +12,7 @@ public class RegisterRequest {
     @NotBlank
     private String name;
 
-    @Email
+    @Email(message = "Invalid Email Format")
     private String email;
 
     @NotBlank

@@ -37,7 +37,7 @@ public class DonorProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(name = "donor_name", nullable = false)
     private String name;

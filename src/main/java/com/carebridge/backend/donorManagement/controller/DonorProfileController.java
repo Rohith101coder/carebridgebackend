@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,6 +39,10 @@ public class DonorProfileController {
     }
 
     
+    @PutMapping(
+        value = "/update-profile",
+        consumes = {"multipart/form-data"}
+    )
     public ResponseEntity<DonorResponse> updateDonorProfile(
         @ModelAttribute DonorProfileUpdateRequest request
     ){

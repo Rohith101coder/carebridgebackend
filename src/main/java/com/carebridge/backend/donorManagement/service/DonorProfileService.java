@@ -20,6 +20,7 @@ import com.carebridge.backend.donorManagement.exception.DonorProfileNotFoundExce
 import com.carebridge.backend.donorManagement.exception.FileIssueException;
 import com.carebridge.backend.donorManagement.exception.UserNotFoundException;
 import com.carebridge.backend.donorManagement.repository.DonorProfileRepository;
+import com.carebridge.backend.notificationManagement.service.EmailService;
 
 // import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,8 @@ public class DonorProfileService {
     private final UserRepository userRepository;
     
     private final DonorProfileRepository donorProfileRepository;
+
+    private final EmailService emailService;
 
     public DonorResponse createDonorProfile(DonorProfileRequest request){
 
@@ -89,7 +92,9 @@ public class DonorProfileService {
 
             donorProfileRepository.save(donor);
 
-            return new DonorResponse("Donor profile created successfully");
+            emailService.donorProfileNotification(email, request.getName());
+
+            return new DonorResponse("Donor profile created successfully Status : PENDING");
 
     }
 

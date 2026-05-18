@@ -9,7 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 import com.carebridge.backend.authManagement.dto.ErrorResponse;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class DonorGlobalExceptionHandler {
     
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFound(

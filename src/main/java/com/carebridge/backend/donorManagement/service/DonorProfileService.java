@@ -1,6 +1,8 @@
 package com.carebridge.backend.donorManagement.service;
 
 import java.io.IOException;
+import java.time.Year;
+import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,6 +67,8 @@ public class DonorProfileService {
             donor.setPhone(request.getPhone());
             donor.setPanNumber(request.getPanNumber());
 
+            String donorId = "CB-DON-"+Year.now().getValue()+"-"+UUID.randomUUID().toString().replace("-", "")
+            .substring(0,6).toUpperCase();
             MultipartFile profilePic = request.getProfilePic();
             if(profilePic != null && !profilePic.isEmpty()){
                  try {
@@ -83,7 +87,7 @@ public class DonorProfileService {
                    throw new FileIssueException("Fail to upload File");
                 }
             }
-
+            donor.setCareBridgeID(donorId);
             donor.setDonorStatus(VerificationStatus.PENDING);
 
             donor.setSubscriptionStatus(DonorSubscriptionStatus.UNSUBSCRIBED);

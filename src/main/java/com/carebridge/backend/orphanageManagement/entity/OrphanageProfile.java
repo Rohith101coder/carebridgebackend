@@ -1,0 +1,125 @@
+package com.carebridge.backend.orphanageManagement.entity;
+
+import java.time.LocalDateTime;
+
+// import org.springframework.web.multipart.MultipartFile;
+
+import com.carebridge.backend.authManagement.entity.User;
+import com.carebridge.backend.common.enums.VerificationStatus;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "orphanage_profile")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class OrphanageProfile {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name="carebridge_id", nullable=false, unique = true)
+    private String carebridgeId;
+
+    @Column(nullable = false)
+    private String orphanageName;
+
+    @Column(nullable = false)
+    private String adminName;
+
+    private String village;
+
+    private String mandal;
+
+    @Column(nullable = false)
+    private String district;
+
+    @Column(nullable = false)
+    private String state;
+
+    @Column(nullable = false)
+    private String country;
+
+    @Column(nullable = false)
+    private Integer numberOfChildren;
+
+    @Column(nullable = false, unique = true)
+    private String orphanageEmail;
+
+    private boolean orphanageEmailVerified;
+
+    @Column(nullable = false, unique = true)
+    private String orphanagePhone;
+
+    private String websiteLink;
+
+    private String socialMediaLinks;
+
+    @Column(nullable=false, unique = true)
+    private String darpanId;
+
+    @Column(nullable = false, unique = true)
+    private String panNumber;
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] panPhoto;
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] jjActCertificatePhoto;
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] orphanageProfilePic;
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] adminProfilePic;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private VerificationStatus verificationStatus;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updateAt;
+
+    @PrePersist
+    public void onCreate(){
+        this.createdAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate(){
+        this.updateAt = LocalDateTime.now();
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
+    private User user;
+
+
+
+}

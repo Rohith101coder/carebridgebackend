@@ -50,6 +50,9 @@ public class DonorProfile {
 
     private String houseNum;
 
+    @Column(name = "carebridgeID", nullable = false, unique = true)
+    private String careBridgeID;
+
     @Column(name = "village")
     private String village;
 

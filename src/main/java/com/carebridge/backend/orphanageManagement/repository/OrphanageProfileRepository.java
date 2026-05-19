@@ -7,9 +7,14 @@ import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 import java.util.Optional;
 
 import com.carebridge.backend.authManagement.entity.User;
+import java.util.List;
+import com.carebridge.backend.common.enums.VerificationStatus;
+
 
 
 public interface OrphanageProfileRepository extends JpaRepository<OrphanageProfile, Long>{
     Optional<OrphanageProfile>  findByUser(User user);
     OrphanageProfile findByOrphanageEmail(String orphanageEmail);
+
+    List<OrphanageProfile> findByVerificationStatus(VerificationStatus verificationStatus);
 }

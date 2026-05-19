@@ -1,6 +1,6 @@
 package com.carebridge.backend.orphanageManagement.service;
 
-import java.io.IOException;
+// import java.io.IOException;
 // import java.net.Authenticator;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 // import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+// import org.springframework.web.multipart.MultipartFile;
 
 import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.authManagement.exception.InvalidOTPException;
@@ -20,7 +20,8 @@ import com.carebridge.backend.authManagement.exception.OtpExpiredException;
 import com.carebridge.backend.authManagement.exception.OtpNotFoundException;
 import com.carebridge.backend.authManagement.repository.UserRepository;
 import com.carebridge.backend.common.enums.VerificationStatus;
-import com.carebridge.backend.donorManagement.exception.FileIssueException;
+import com.carebridge.backend.common.service.ImageUploadService;
+// import com.carebridge.backend.donorManagement.exception.FileIssueException;
 import com.carebridge.backend.notificationManagement.entity.Otp;
 import com.carebridge.backend.notificationManagement.repository.OtpRepository;
 import com.carebridge.backend.notificationManagement.service.EmailService;
@@ -51,6 +52,8 @@ public class OrphanageProfileService {
 
     private final EmailService emailService;
 
+    private final ImageUploadService imageUploadService;
+
 
     public OrpProfileResponse createOrphanageProfile(OrphanageProfileRequest request){
 
@@ -80,42 +83,19 @@ public class OrphanageProfileService {
         orphanage.setDarpanId(request.getDarpanId());
         orphanage.setPanNumber(request.getPanNumber());
 
-        MultipartFile panPhoto = request.getPanPhoto();
-        if(panPhoto!=null && !panPhoto.isEmpty()){
-            try{
-                orphanage.setPanPhoto(panPhoto.getBytes());
-            }catch(IOException e){
-                throw new FileIssueException("Fail to upload file");
-            }
-        }
+        String panPhotoUrl =
+        imageUploadService.uploadImage(
+                request.getPanPhoto()
+        );
 
-        MultipartFile jjActCertificatePhoto = request.getJjActCertificatePhoto();
-        if(jjActCertificatePhoto!=null && !jjActCertificatePhoto.isEmpty()){
-             try{
-                orphanage.setJjActCertificatePhoto(jjActCertificatePhoto.getBytes());
-            }catch(IOException e){
-                throw new FileIssueException("Fail to upload file");
-            }
-        }
+        orphanage.setPanPhoto(panPhotoUrl);
+       
 
-        MultipartFile orphanageProfilePic = request.getOrphanageProfilePic();
-        if(orphanageProfilePic!=null && !orphanageProfilePic.isEmpty()){
-             try{
-                orphanage.setOrphanageProfilePic(orphanageProfilePic.getBytes());
-            }catch(IOException e){
-                throw new FileIssueException("Fail to upload file");
-            }
-        }
+       orphanage.setJjActCertificatePhoto(imageUploadService.uploadImage(request.getJjActCertificatePhoto()));
 
-        MultipartFile adminPic = request.getAdminProfilePic();
+       orphanage.setOrphanageProfilePic(imageUploadService.uploadImage(request.getOrphanageProfilePic()));
 
-        if(adminPic!=null && !adminPic.isEmpty()){
-            try{
-                orphanage.setOrphanageProfilePic(adminPic.getBytes());
-            }catch(IOException e){
-                throw new FileIssueException("Fail to upload file");
-            }
-        }
+        orphanage.setAdminProfilePic(imageUploadService.uploadImage(request.getAdminProfilePic()));
 
         String carebridgeId = "CB-ORP"+"-"+Year.now()+"-"+
                 UUID.randomUUID().toString().replace("-", "")
@@ -266,41 +246,11 @@ public class OrphanageProfileService {
 
     // 📷 orphanage profile pic
 
-    MultipartFile orphanagePic =
-            request.getOrphanageProfilePic();
-
-    if(orphanagePic != null &&
-            !orphanagePic.isEmpty()){
-
-        try{
-            profile.setOrphanageProfilePic(
-                    orphanagePic.getBytes()
-            );
-        }catch(IOException e){
-            throw new FileIssueException(
-                    "Failed to upload image"
-            );
-        }
-    }
+   profile.setOrphanageProfilePic(imageUploadService.uploadImage(request.getOrphanageProfilePic()));
 
     // 📷 admin pic
 
-    MultipartFile adminPic =
-            request.getAdminProfilePic();
-
-    if(adminPic != null &&
-            !adminPic.isEmpty()){
-
-        try{
-            profile.setAdminProfilePic(
-                    adminPic.getBytes()
-            );
-        }catch(IOException e){
-            throw new FileIssueException(
-                    "Failed to upload image"
-            );
-        }
-    }
+    profile.setAdminProfilePic(imageUploadService.uploadImage(request.getAdminProfilePic()));
 
     orphanageProfileRepository.save(profile);
 

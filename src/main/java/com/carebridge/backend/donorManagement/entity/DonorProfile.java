@@ -68,16 +68,14 @@ public class DonorProfile {
     @Column(name = "phone_number", nullable = false, unique = true)
     private String phone;
 
-    @Lob
-    @Column(name = "profile_pic", columnDefinition = "LONGBLOB")
-    private byte[] profilePic;
+   
+    private String profilePic;
 
     @Column(name = "pan_number", nullable = false, unique = true)
     private String panNumber;
     
-    @Lob
-    @Column(name = "pan_photo", columnDefinition = "LONGBLOB")
-    private byte[] panPhoto;
+    @Column(nullable = false)
+    private String panPhoto;
 
     private LocalDateTime createdAt;
 

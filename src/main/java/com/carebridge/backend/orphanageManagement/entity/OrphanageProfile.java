@@ -82,21 +82,17 @@ public class OrphanageProfile {
     @Column(nullable = false, unique = true)
     private String panNumber;
 
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    private byte[] panPhoto;
+    
+    @Column(nullable = false)
+    private String panPhoto;
 
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    private byte[] jjActCertificatePhoto;
+    @Column(nullable = false)
+    private String jjActCertificatePhoto;
 
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    private byte[] orphanageProfilePic;
+    private String orphanageProfilePic;
 
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    private byte[] adminProfilePic;
+    
+    private String adminProfilePic;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

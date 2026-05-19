@@ -13,6 +13,7 @@ import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.authManagement.repository.UserRepository;
 import com.carebridge.backend.common.enums.DonorSubscriptionStatus;
 import com.carebridge.backend.common.enums.VerificationStatus;
+import com.carebridge.backend.common.service.ImageUploadService;
 import com.carebridge.backend.donorManagement.dto.DonorProfileRequest;
 import com.carebridge.backend.donorManagement.dto.DonorProfileUpdateRequest;
 import com.carebridge.backend.donorManagement.dto.DonorResponse;
@@ -36,6 +37,8 @@ public class DonorProfileService {
     private final DonorProfileRepository donorProfileRepository;
 
     private final EmailService emailService;
+
+    private final ImageUploadService imageUploadService;
 
     public DonorResponse createDonorProfile(DonorProfileRequest request){
 
@@ -69,24 +72,12 @@ public class DonorProfileService {
 
             String donorId = "CB-DON-"+Year.now().getValue()+"-"+UUID.randomUUID().toString().replace("-", "")
             .substring(0,6).toUpperCase();
-            MultipartFile profilePic = request.getProfilePic();
-            if(profilePic != null && !profilePic.isEmpty()){
-                 try {
-                    donor.setProfilePic(profilePic.getBytes());
-                 } catch (IOException e) {
-                  throw new FileIssueException("Fail to upload File");
-                 }
-            }
+                String profilePic = imageUploadService.uploadImage(request.getProfilePic());
+                donor.setProfilePic(profilePic);
 
-            MultipartFile panPhoto = request.getPanPhoto();
+                String panPhotoUrl = imageUploadService.uploadImage(request.getPanPhoto());
+                donor.setPanPhoto(panPhotoUrl);
 
-            if(panPhoto!=null && !panPhoto.isEmpty()){
-                try {
-                    donor.setPanPhoto(panPhoto.getBytes());
-                } catch (IOException e) {
-                   throw new FileIssueException("Fail to upload File");
-                }
-            }
             donor.setCareBridgeID(donorId);
             donor.setDonorStatus(VerificationStatus.PENDING);
 
@@ -163,26 +154,14 @@ public class DonorProfileService {
         if (request.getProfilePic() != null
                 && !request.getProfilePic().isEmpty()) {
 
-            try {
-                donor.setProfilePic(
-                        request.getProfilePic().getBytes()
-                );
-            } catch (IOException e) {
-               throw new FileIssueException("File upload fail");
-            }
+           donor.setProfilePic(imageUploadService.uploadImage(request.getProfilePic()));
         }
 
         // 📷 update pan photo
         if (request.getPanPhoto() != null
                 && !request.getPanPhoto().isEmpty()) {
 
-            try {
-                donor.setPanPhoto(
-                        request.getPanPhoto().getBytes()
-                );
-            } catch (IOException e) {
-              throw new FileIssueException("File upload fail");
-            }
+            donor.setPanPhoto(imageUploadService.uploadImage(request.getPanPhoto()));
         }
 
         donorProfileRepository.save(donor);

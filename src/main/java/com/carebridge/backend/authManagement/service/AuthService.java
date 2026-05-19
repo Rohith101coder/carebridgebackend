@@ -53,7 +53,7 @@ public class AuthService {
         otp.setOtp(otpCode);
         otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
         otp.setUsed(false);
-
+        
         otpRepository.save(otp);
         System.out.println("OTP for: "+request.getEmail() + " is :"+ otpCode);
         emailService.sendOtp(request.getEmail(), otpCode);

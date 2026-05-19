@@ -3,6 +3,7 @@ package com.carebridge.backend.orphanageManagement.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.carebridge.backend.orphanageManagement.dto.OTPVerifyAndOrpProfileAdd;
 import com.carebridge.backend.orphanageManagement.dto.OrpProfileResponse;
 import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileRequest;
+import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileUpdateRequest;
 import com.carebridge.backend.orphanageManagement.dto.ResendOrpOTP;
 
 import com.carebridge.backend.orphanageManagement.service.OrphanageProfileService;
@@ -50,5 +52,19 @@ public class OrphanageProfileController {
         System.out.println(request.getOrpEmail());
         OrpProfileResponse response = orphanageProfileService.resendOrpOTP(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(
+        value = "/update-profile",
+        consumes =   {"multipart/form-data"}
+    )
+    public ResponseEntity<OrpProfileResponse> updateProfile(
+        @ModelAttribute OrphanageProfileUpdateRequest request
+    ){
+        OrpProfileResponse response =
+            orphanageProfileService
+                    .updateOrphanageProfile(request);
+
+    return ResponseEntity.ok(response);
     }
 }

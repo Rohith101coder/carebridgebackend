@@ -31,4 +31,13 @@ public class OrpGlobalExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(OrphanageProfileNotFoundException.class)
+    public ResponseEntity<OrpErrorResponse> handleOrphanageProfileNotFound(OrphanageProfileNotFoundException ex,
+        WebRequest request
+    ){
+        OrpErrorResponse error = new OrpErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), request.getDescription(false).replace("uri=", ""));
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 }

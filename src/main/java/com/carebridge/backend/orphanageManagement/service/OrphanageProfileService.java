@@ -28,9 +28,11 @@ import com.carebridge.backend.notificationManagement.util.OtpUtil;
 import com.carebridge.backend.orphanageManagement.dto.OTPVerifyAndOrpProfileAdd;
 import com.carebridge.backend.orphanageManagement.dto.OrpProfileResponse;
 import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileRequest;
+import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileUpdateRequest;
 import com.carebridge.backend.orphanageManagement.dto.ResendOrpOTP;
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 import com.carebridge.backend.orphanageManagement.exception.OrpProfileAlreadyExsistException;
+import com.carebridge.backend.orphanageManagement.exception.OrphanageProfileNotFoundException;
 import com.carebridge.backend.orphanageManagement.exception.UnAuthorizedUserException;
 import com.carebridge.backend.orphanageManagement.repository.OrphanageProfileRepository;
 
@@ -190,5 +192,120 @@ public class OrphanageProfileService {
 
         return new OrpProfileResponse("OTP resent successfully to "+request.getOrpEmail());
 
+    }
+
+    public OrpProfileResponse updateOrphanageProfile(OrphanageProfileUpdateRequest request){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String userEmail = authentication.getName();
+
+        User user = userRepository.findByEmail(userEmail).orElseThrow(()-> new UnAuthorizedUserException("User Not Found"));
+
+        OrphanageProfile profile = orphanageProfileRepository.findByUser(user).orElseThrow(()-> new OrphanageProfileNotFoundException("Orp profile not Found"));
+
+          if(request.getAdminName() != null){
+        profile.setAdminName(
+                request.getAdminName()
+        );
+    }
+
+    if(request.getVillage() != null){
+        profile.setVillage(
+                request.getVillage()
+        );
+    }
+
+    if(request.getMandal() != null){
+        profile.setMandal(
+                request.getMandal()
+        );
+    }
+
+    if(request.getDistrict() != null){
+        profile.setDistrict(
+                request.getDistrict()
+        );
+    }
+
+    if(request.getState() != null){
+        profile.setState(
+                request.getState()
+        );
+    }
+
+    if(request.getCountry() != null){
+        profile.setCountry(
+                request.getCountry()
+        );
+    }
+
+    if(request.getNumberOfChildren() != null){
+        profile.setNumberOfChildren(
+                request.getNumberOfChildren()
+        );
+    }
+
+    if(request.getOrphanagePhone() != null){
+        profile.setOrphanagePhone(
+                request.getOrphanagePhone()
+        );
+    }
+
+    if(request.getWebsiteLink() != null){
+        profile.setWebsiteLink(
+                request.getWebsiteLink()
+        );
+    }
+
+    if(request.getSocialMediaLinks() != null){
+        profile.setSocialMediaLinks(
+                request.getSocialMediaLinks()
+        );
+    }
+
+    // 📷 orphanage profile pic
+
+    MultipartFile orphanagePic =
+            request.getOrphanageProfilePic();
+
+    if(orphanagePic != null &&
+            !orphanagePic.isEmpty()){
+
+        try{
+            profile.setOrphanageProfilePic(
+                    orphanagePic.getBytes()
+            );
+        }catch(IOException e){
+            throw new FileIssueException(
+                    "Failed to upload image"
+            );
+        }
+    }
+
+    // 📷 admin pic
+
+    MultipartFile adminPic =
+            request.getAdminProfilePic();
+
+    if(adminPic != null &&
+            !adminPic.isEmpty()){
+
+        try{
+            profile.setAdminProfilePic(
+                    adminPic.getBytes()
+            );
+        }catch(IOException e){
+            throw new FileIssueException(
+                    "Failed to upload image"
+            );
+        }
+    }
+
+    orphanageProfileRepository.save(profile);
+
+
+
+        return new OrpProfileResponse("Orphanage profile updated successfully");
     }
 }

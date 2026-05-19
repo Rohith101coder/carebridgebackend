@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,7 @@ public class OrphanageProfileRequest {
     @NotBlank
     private String country;
 
-    @NotBlank
+    @NotNull
     private Integer numberOfChildren;
 
     @Email
@@ -51,10 +52,10 @@ public class OrphanageProfileRequest {
     @NotBlank
     private String panNumber;
 
-    @NotBlank
+    @NotNull
     private MultipartFile panPhoto;
 
-    @NotBlank
+    @NotNull
     private MultipartFile jjActCertificatePhoto;
 
     private MultipartFile orphanageProfilePic;

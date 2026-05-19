@@ -8,6 +8,7 @@ import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.common.enums.DonorSubscriptionStatus;
 import com.carebridge.backend.common.enums.VerificationStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -90,7 +91,7 @@ public class DonorProfile {
     @Column(nullable = false)
     private DonorSubscriptionStatus subscriptionStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id",
         referencedColumnName = "id",
         nullable = false,

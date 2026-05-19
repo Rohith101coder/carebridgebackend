@@ -26,12 +26,20 @@ public class SecurityConfig {
         http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/**").permitAll()
-            .requestMatchers("/donor/**").hasRole("DONOR")
-            .requestMatchers("/orphanage/**").hasRole("ORPHANAGE")
-            .requestMatchers("/admin/**").hasRole("ADMIN")
-            .anyRequest().authenticated()
-        )
+        .requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html"
+                        ).permitAll()
+        .requestMatchers("/auth/**").permitAll()
+        .requestMatchers("/donor/**").hasRole("DONOR")
+        .requestMatchers("/orphanage/**").hasRole("ORPHANAGE")
+        .requestMatchers("/admin/**").hasRole("ADMIN")
+        .anyRequest().authenticated())
+        .formLogin(form -> form.disable())
+
+        .httpBasic(httpBasic -> httpBasic.disable())
+
        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

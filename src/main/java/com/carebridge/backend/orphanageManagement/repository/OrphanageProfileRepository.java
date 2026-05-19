@@ -11,5 +11,5 @@ import com.carebridge.backend.authManagement.entity.User;
 
 public interface OrphanageProfileRepository extends JpaRepository<OrphanageProfile, Long>{
     Optional<OrphanageProfile>  findByUser(User user);
-    OrphanageProfile findByEmail(String email);
+    OrphanageProfile findByOrphanageEmail(String orphanageEmail);
 }

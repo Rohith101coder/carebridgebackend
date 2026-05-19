@@ -1,19 +1,20 @@
 package com.carebridge.backend.orphanageManagement.service;
 
 import java.io.IOException;
-import java.net.Authenticator;
+// import java.net.Authenticator;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
+// import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.authManagement.exception.InvalidOTPException;
+import com.carebridge.backend.authManagement.exception.OTPEmailNotFoundException;
 import com.carebridge.backend.authManagement.exception.OtpAlreadyUsedException;
 import com.carebridge.backend.authManagement.exception.OtpExpiredException;
 import com.carebridge.backend.authManagement.exception.OtpNotFoundException;
@@ -141,6 +142,7 @@ public class OrphanageProfileService {
 
     public OrpProfileResponse OrpOTPVerify(OTPVerifyAndOrpProfileAdd request){
 
+        System.out.println(request.getEmail());
         Otp otp = otpRepository.findByEmail(request.getEmail())
         .orElseThrow(()-> new OtpNotFoundException("OTP not found"));
 
@@ -157,7 +159,7 @@ public class OrphanageProfileService {
                 throw new InvalidOTPException("Invalid OTP");
             }
 
-            OrphanageProfile profile = orphanageProfileRepository.findByEmail(request.getEmail());
+            OrphanageProfile profile = orphanageProfileRepository.findByOrphanageEmail(request.getEmail());
 
             profile.setOrphanageEmailVerified(true);
 
@@ -169,8 +171,22 @@ public class OrphanageProfileService {
             // emailService.
 
             return new OrpProfileResponse("Orp Profile Completion Successful Current Status : PENDING");
+    }
 
+    public OrpProfileResponse resendOrpOTP(String email){
+         Otp otp = otpRepository.findByEmail(email)
+                .orElseThrow(() -> new OTPEmailNotFoundException("No OTP request found"));
 
+        String newOtp = OtpUtil.generateOtp();
+
+        otp.setOtp(newOtp);
+        otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+        otp.setUsed(false);
+
+        otpRepository.save(otp);
+        emailService.sendOtp(email, newOtp);
+
+        return new OrpProfileResponse("OTP resent successfully to "+email);
 
     }
 }

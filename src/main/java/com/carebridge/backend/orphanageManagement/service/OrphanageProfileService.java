@@ -28,6 +28,7 @@ import com.carebridge.backend.notificationManagement.util.OtpUtil;
 import com.carebridge.backend.orphanageManagement.dto.OTPVerifyAndOrpProfileAdd;
 import com.carebridge.backend.orphanageManagement.dto.OrpProfileResponse;
 import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileRequest;
+import com.carebridge.backend.orphanageManagement.dto.ResendOrpOTP;
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 import com.carebridge.backend.orphanageManagement.exception.OrpProfileAlreadyExsistException;
 import com.carebridge.backend.orphanageManagement.exception.UnAuthorizedUserException;
@@ -142,8 +143,8 @@ public class OrphanageProfileService {
 
     public OrpProfileResponse OrpOTPVerify(OTPVerifyAndOrpProfileAdd request){
 
-        System.out.println(request.getEmail());
-        Otp otp = otpRepository.findByEmail(request.getEmail())
+        System.out.println(request.getOrpEmail());
+        Otp otp = otpRepository.findByEmail(request.getOrpEmail())
         .orElseThrow(()-> new OtpNotFoundException("OTP not found"));
 
          if(otp.isUsed()){
@@ -159,7 +160,7 @@ public class OrphanageProfileService {
                 throw new InvalidOTPException("Invalid OTP");
             }
 
-            OrphanageProfile profile = orphanageProfileRepository.findByOrphanageEmail(request.getEmail());
+            OrphanageProfile profile = orphanageProfileRepository.findByOrphanageEmail(request.getOrpEmail());
 
             profile.setOrphanageEmailVerified(true);
 
@@ -173,8 +174,8 @@ public class OrphanageProfileService {
             return new OrpProfileResponse("Orp Profile Completion Successful Current Status : PENDING");
     }
 
-    public OrpProfileResponse resendOrpOTP(String email){
-         Otp otp = otpRepository.findByEmail(email)
+    public OrpProfileResponse resendOrpOTP(ResendOrpOTP request){
+         Otp otp = otpRepository.findByEmail(request.getOrpEmail())
                 .orElseThrow(() -> new OTPEmailNotFoundException("No OTP request found"));
 
         String newOtp = OtpUtil.generateOtp();
@@ -184,9 +185,9 @@ public class OrphanageProfileService {
         otp.setUsed(false);
 
         otpRepository.save(otp);
-        emailService.sendOtp(email, newOtp);
+        emailService.sendOtp(request.getOrpEmail(), newOtp);
 
-        return new OrpProfileResponse("OTP resent successfully to "+email);
+        return new OrpProfileResponse("OTP resent successfully to "+request.getOrpEmail());
 
     }
 }

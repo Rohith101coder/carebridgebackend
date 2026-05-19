@@ -11,7 +11,8 @@ import lombok.*;
 
 public class OTPVerifyAndOrpProfileAdd {
  
-    private String email;
+
+    private String orpEmail;
 
     private String otp;
 }

@@ -168,8 +168,9 @@ public class OrphanageProfileService {
 
             otp.setUsed(true);
             otpRepository.save(otp);
+            
 
-            // emailService.
+            emailService.orpProfileNotification(request.getOrpEmail(), profile.getAdminName());
 
             return new OrpProfileResponse("Orp Profile Completion Successful Current Status : PENDING");
     }

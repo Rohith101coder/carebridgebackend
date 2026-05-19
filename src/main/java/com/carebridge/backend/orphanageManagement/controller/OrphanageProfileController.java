@@ -11,10 +11,10 @@ import com.carebridge.backend.orphanageManagement.dto.OTPVerifyAndOrpProfileAdd;
 import com.carebridge.backend.orphanageManagement.dto.OrpProfileResponse;
 import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileRequest;
 import com.carebridge.backend.orphanageManagement.dto.ResendOrpOTP;
-// import com.carebridge.backend.orphanageManagement.repository.OrphanageProfileRepository;
+
 import com.carebridge.backend.orphanageManagement.service.OrphanageProfileService;
 
-// import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -46,10 +46,9 @@ public class OrphanageProfileController {
 
     @PostMapping("/resendOrpOTP")
     public ResponseEntity<OrpProfileResponse> resendOrpOTP(@RequestBody ResendOrpOTP request){
+        System.out.println(request);
         System.out.println(request.getOrpEmail());
         OrpProfileResponse response = orphanageProfileService.resendOrpOTP(request);
         return ResponseEntity.ok(response);
     }
-
-
 }

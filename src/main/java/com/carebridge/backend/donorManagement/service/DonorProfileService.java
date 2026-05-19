@@ -1,13 +1,13 @@
 package com.carebridge.backend.donorManagement.service;
 
-import java.io.IOException;
+// import java.io.IOException;
 import java.time.Year;
 import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+// import org.springframework.web.multipart.MultipartFile;
 
 import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.authManagement.repository.UserRepository;
@@ -20,7 +20,7 @@ import com.carebridge.backend.donorManagement.dto.DonorResponse;
 import com.carebridge.backend.donorManagement.entity.DonorProfile;
 import com.carebridge.backend.donorManagement.exception.DonorProfileAlreadyExsistException;
 import com.carebridge.backend.donorManagement.exception.DonorProfileNotFoundException;
-import com.carebridge.backend.donorManagement.exception.FileIssueException;
+// import com.carebridge.backend.donorManagement.exception.FileIssueException;
 import com.carebridge.backend.donorManagement.exception.UserNotFoundException;
 import com.carebridge.backend.donorManagement.repository.DonorProfileRepository;
 import com.carebridge.backend.notificationManagement.service.EmailService;

@@ -26,4 +26,22 @@ public class AdminOrpController {
 
         return ResponseEntity.ok(list);
     }
+
+    @GetMapping("/approved")
+    public ResponseEntity<List<OrphanageProfile>> getAllApproved(){
+
+        List<OrphanageProfile> list = adminService.getAllApprovedOrpProfiles();
+
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/rejected")
+    public ResponseEntity<List<OrphanageProfile>> getAllRejected(){
+
+        List<OrphanageProfile> list = adminService.getAllRejectedOrpProfiles();
+
+        return ResponseEntity.ok(list);
+    }
+
+    
 }

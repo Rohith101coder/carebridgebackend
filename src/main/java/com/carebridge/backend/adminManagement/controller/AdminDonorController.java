@@ -58,6 +58,7 @@ public class AdminDonorController {
     @PatchMapping("/reject/{id}")
     public ResponseEntity<AdminResponse> rejectDonor(@PathVariable String id, @RequestBody EmailReason reason){
 
+         System.out.println(reason.getReason());
         AdminResponse response = adminService.rejectDonor(id, reason);
 
         return ResponseEntity.ok(response);

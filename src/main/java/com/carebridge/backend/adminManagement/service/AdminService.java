@@ -3,6 +3,7 @@ package com.carebridge.backend.adminManagement.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.carebridge.backend.adminManagement.dto.AdminResponse;
 import com.carebridge.backend.adminManagement.dto.EmailReason;
@@ -100,6 +101,7 @@ public class AdminService {
     }
 
 
+    @Transactional
     public AdminResponse rejectDonor(String id, EmailReason reason){
 
          DonorProfile profile = donorProfileRepository.findByCareBridgeID(id).orElseThrow(()-> new DonorProfileNotFoundException("No Profile Found"));
@@ -127,6 +129,7 @@ public class AdminService {
         OrphanageProfile profile = orphanageProfileRepository.findByCarebridgeId(id).orElseThrow(()-> new OrpException("Orp not found"));
 
         profile.setVerificationStatus(VerificationStatus.VERIFIED);
+        orphanageProfileRepository.save(profile);
 
         String orpEmail = profile.getOrphanageEmail();
         String orpAdmin = profile.getAdminName();
@@ -137,6 +140,7 @@ public class AdminService {
         return new AdminResponse("Orp approved");
     }
 
+    @Transactional
     public AdminResponse rejectOrp(String id, EmailReason reason){
          OrphanageProfile profile = orphanageProfileRepository.findByCarebridgeId(id).orElseThrow(()-> new OrpException("Orp not found"));
 

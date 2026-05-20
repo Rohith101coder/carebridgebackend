@@ -18,6 +18,7 @@ import lombok.*;
 @NoArgsConstructor
 public class RejectedDonorProfile {
     
+    @Id
     private Long id;
 
     @Column(name = "donor_name", nullable = false)
@@ -31,7 +32,7 @@ public class RejectedDonorProfile {
 
     private String houseNum;
 
-    @Column(name = "carebridgeID", nullable = false, unique = true)
+    @Column(name = "carebridgeID", nullable = false)
     private String careBridgeID;
 
     @Column(name = "village")
@@ -45,16 +46,16 @@ public class RejectedDonorProfile {
 
     private String country;
 
-    @Column(name = "phone_number", nullable = false, unique = true)
+  @Column(nullable = false)
     private String phone;
 
    
     private String profilePic;
 
-    @Column(name = "pan_number", nullable = false, unique = true)
+    
     private String panNumber;
     
-    @Column(nullable = false)
+
     private String panPhoto;
 
     private LocalDateTime createdAt;
@@ -65,15 +66,12 @@ public class RejectedDonorProfile {
     @Column(nullable = false)
     private VerificationStatus donorStatus;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private DonorSubscriptionStatus subscriptionStatus;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id",
         referencedColumnName = "id",
-        nullable = false,
-        unique = true
+        nullable = false
     )
     private User user;
 

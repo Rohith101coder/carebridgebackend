@@ -17,7 +17,7 @@ import lombok.*;
 public class RejectedOrpProfile {
     
      
-    
+    @Id
     private Long id;
 
     @Column(name="carebridge_id", nullable=false, unique = true)
@@ -95,7 +95,7 @@ public class RejectedOrpProfile {
     // }
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
 }

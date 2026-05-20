@@ -11,7 +11,9 @@ import com.carebridge.backend.adminManagement.exception.OrpException;
 import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.common.enums.VerificationStatus;
 import com.carebridge.backend.donorManagement.entity.DonorProfile;
+import com.carebridge.backend.donorManagement.entity.RejectedDonorProfile;
 import com.carebridge.backend.donorManagement.repository.DonorProfileRepository;
+import com.carebridge.backend.donorManagement.repository.RejDonProRepo;
 import com.carebridge.backend.notificationManagement.service.EmailService;
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 import com.carebridge.backend.orphanageManagement.entity.RejectedOrpProfile;
@@ -31,6 +33,8 @@ public class AdminService {
     private final EmailService emailService;
 
     private final RejectedOrpRepo rejectedOrpRepo;
+
+    private final RejDonProRepo rejDonProRepo;
 
 
     public List<DonorProfile> getAllPendingDonorProfiles(){
@@ -107,7 +111,13 @@ public class AdminService {
           User user = profile.getUser();
         String email = user.getEmail();
         String name = profile.getName();
-        
+
+        RejectedDonorProfile rejectedProfile = new RejectedDonorProfile(profile.getId(),profile.getName(),profile.getDateOfBirth(),profile.getDesignation(),profile.getHouseNum(),profile.getCareBridgeID(),profile.getVillage(),profile.getMandal(),profile.getDistrict(),profile.getState(),profile.getCountry(),profile.getPhone(),profile.getProfilePic(),profile.getPanNumber(),profile.getPanPhoto(),profile.getCreatedAt(),profile.getUpdatedAt(),profile.getDonorStatus(),profile.getSubscriptionStatus(),profile.getUser());
+
+        rejDonProRepo.save(rejectedProfile);
+
+        donorProfileRepository.deleteByCareBridgeID(id);
+
         emailService.donorRejectionNotification(email,reason.getReason(),name);
         return new AdminResponse("Donor Rejected");
     }

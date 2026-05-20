@@ -14,7 +14,9 @@ import com.carebridge.backend.donorManagement.entity.DonorProfile;
 import com.carebridge.backend.donorManagement.repository.DonorProfileRepository;
 import com.carebridge.backend.notificationManagement.service.EmailService;
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
+import com.carebridge.backend.orphanageManagement.entity.RejectedOrpProfile;
 import com.carebridge.backend.orphanageManagement.repository.OrphanageProfileRepository;
+import com.carebridge.backend.orphanageManagement.repository.RejectedOrpRepo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +29,8 @@ public class AdminService {
     private final OrphanageProfileRepository orphanageProfileRepository;
 
     private final EmailService emailService;
+
+    private final RejectedOrpRepo rejectedOrpRepo;
 
 
     public List<DonorProfile> getAllPendingDonorProfiles(){
@@ -86,7 +90,7 @@ public class AdminService {
         String email = user.getEmail();
         String name = profile.getName();
 
-        emailService.donorApproveNotification(email, name);
+        emailService.donorApproveNotification(email, name,id);
 
         return new AdminResponse("Donor approval success");
     }
@@ -118,7 +122,7 @@ public class AdminService {
         String orpAdmin = profile.getAdminName();
         String orpName = profile.getOrphanageName();
 
-        emailService.approveOrpNotification(orpEmail, orpAdmin, orpName);
+        emailService.approveOrpNotification(orpEmail, orpAdmin, orpName, id);
 
         return new AdminResponse("Orp approved");
     }
@@ -130,6 +134,15 @@ public class AdminService {
             String orpEmail = profile.getOrphanageEmail();
         String orpAdmin = profile.getAdminName();
         String orpName = profile.getOrphanageName();
+
+        RejectedOrpProfile rejectedProfile = new RejectedOrpProfile(profile.getId(),profile.getCarebridgeId(),profile.getOrphanageName(),profile.getAdminName(),profile.getVillage(),profile.getMandal(),profile.getDistrict(),profile.getState(),profile.getCountry(),profile.getNumberOfChildren(),profile.getOrphanageEmail(),profile.isOrphanageEmailVerified(),profile.getOrphanagePhone(),profile.getWebsiteLink(),profile.getSocialMediaLinks(),profile.getDarpanId(),profile.getPanNumber(),profile.getPanPhoto(),profile.getJjActCertificatePhoto(),profile.getOrphanageProfilePic(),profile.getAdminProfilePic(),profile.getVerificationStatus(),profile.getCreatedAt(),profile.getUpdateAt(),profile.getUser());
+
+        rejectedOrpRepo.save(rejectedProfile);
+
+        orphanageProfileRepository.deleteByCarebridgeId(id);
+
+
+
 
         emailService.rejectOrpNotification(orpEmail, orpAdmin, orpName, reason.getReason());
 

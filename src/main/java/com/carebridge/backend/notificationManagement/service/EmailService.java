@@ -82,7 +82,7 @@ Team CareBridge
     }
 
 
-    public void donorApproveNotification(String toEmail, String donorName){
+    public void donorApproveNotification(String toEmail, String donorName, String donId){
         String subject = "Your CareBridge Donor Profile Has Been Approved";
         String body = """
                 Dear %s,
@@ -90,6 +90,7 @@ Team CareBridge
 We are delighted to inform you that your donor profile on CareBridge has been successfully verified and approved.
 
 Profile Status: Approved
+Your CareBridgeId : %s
 
 Thank you for your patience and for choosing to be a part of the CareBridge community. Your willingness to support orphanages and children in need truly makes a meaningful difference.
 
@@ -101,7 +102,7 @@ Thank you once again for joining CareBridge.
 
 Warm regards,
 Team CareBridge
-                """.formatted(donorName);
+                """.formatted(donorName, donId);
 
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(toEmail);
@@ -145,7 +146,7 @@ Team CareBridge
     mailSender.send(message);
 }
 
-       public void approveOrpNotification(String toEmail, String orpAdminName, String orpName) {
+       public void approveOrpNotification(String toEmail, String orpAdminName, String orpName, String orpId) {
 
     String subject = "Your Orphanage Profile Has Been Approved";
 
@@ -157,6 +158,7 @@ Team CareBridge
             We are pleased to inform you that the orphanage profile for "%s" has been successfully verified and approved by our team.
 
             Profile Status: Approved
+            Your CareBridgeId : %s
 
             Your orphanage is now officially part of the CareBridge community and can start accessing platform services and opportunities to connect with donors and supporters.
 
@@ -166,7 +168,7 @@ Team CareBridge
 
             Warm regards,
             Team CareBridge
-            """.formatted(orpAdminName, orpName);
+            """.formatted(orpAdminName, orpName,orpId);
 
     SimpleMailMessage message = new SimpleMailMessage();
     message.setTo(toEmail);

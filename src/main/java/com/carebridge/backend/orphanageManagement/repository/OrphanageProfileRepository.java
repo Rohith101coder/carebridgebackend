@@ -19,4 +19,6 @@ public interface OrphanageProfileRepository extends JpaRepository<OrphanageProfi
     List<OrphanageProfile> findByVerificationStatus(VerificationStatus verificationStatus);
 
     Optional<OrphanageProfile>  findByCarebridgeId(String carebridgeId);
+
+    void deleteByCarebridgeId(String id);
 }

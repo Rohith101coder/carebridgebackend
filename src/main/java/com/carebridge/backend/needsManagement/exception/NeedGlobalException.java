@@ -20,5 +20,14 @@ public class NeedGlobalException {
         ErrorResponse error = new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), request.getDescription(false).replace("uri=", ""));
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(ItemAreadyExsist.class)
+   public ResponseEntity<ErrorResponse> handleItemAlreadyExsist(
+        ItemAreadyExsist ex, WebRequest request
+    ){
+
+        ErrorResponse error = new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), request.getDescription(false).replace("uri=", ""));
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
     
 }

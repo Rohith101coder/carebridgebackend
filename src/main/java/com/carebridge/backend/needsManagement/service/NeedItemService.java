@@ -12,6 +12,7 @@ import com.carebridge.backend.donorManagement.exception.UserNotFoundException;
 import com.carebridge.backend.needsManagement.dto.NeedItemRequest;
 import com.carebridge.backend.needsManagement.dto.NeedItemResponse;
 import com.carebridge.backend.needsManagement.entity.NeedItem;
+import com.carebridge.backend.needsManagement.exception.ItemAreadyExsist;
 import com.carebridge.backend.needsManagement.exception.OrpNotVerified;
 import com.carebridge.backend.needsManagement.repository.NeedItemRepo;
 import com.carebridge.backend.needsManagement.util.NeedItemIdGenerator;
@@ -36,6 +37,9 @@ public class NeedItemService {
     @Transactional
     public NeedItemResponse createNeedItem(NeedItemRequest request){
 
+        
+
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("user not present"));
@@ -52,6 +56,21 @@ public class NeedItemService {
 
         String carebridgeId = profile.getCarebridgeId();
         String needItemId = NeedItemIdGenerator.generateNeedItemId(carebridgeId);
+
+        boolean exists =
+        needItemRepo
+                .existsByNameIgnoreCaseAndCategoryAndOrphanageCareBridgeId(
+                        request.getName(),
+                        request.getCategory(),
+                        carebridgeId
+                );
+
+            if(exists){
+
+                    throw new ItemAreadyExsist(
+                    "Need item already exists"
+                    );
+        }
 
         NeedItem item = new NeedItem();
 

@@ -57,7 +57,7 @@ public class NeedItem {
     @Column(nullable = false)
     private PriorityLevel priority;
 
-    @Column(nullable = false)
+    @Column(name = "care_bridge_id",nullable = false)
     private String orphanageCareBridgeId;
 
     @ElementCollection

@@ -5,6 +5,7 @@ package com.carebridge.backend.orphanageManagement.service;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.security.core.Authentication;
 // import org.springframework.security.core.context.SecurityContext;
@@ -83,19 +84,90 @@ public class OrphanageProfileService {
         orphanage.setDarpanId(request.getDarpanId());
         orphanage.setPanNumber(request.getPanNumber());
 
-        String panPhotoUrl =
-        imageUploadService.uploadImage(
-                request.getPanPhoto()
-        );
+       CompletableFuture<String> panPhotoFuture = null;
 
-        orphanage.setPanPhoto(panPhotoUrl);
-       
+CompletableFuture<String> jjActFuture = null;
 
-       orphanage.setJjActCertificatePhoto(imageUploadService.uploadImage(request.getJjActCertificatePhoto()));
+CompletableFuture<String> orphanagePicFuture = null;
 
-       orphanage.setOrphanageProfilePic(imageUploadService.uploadImage(request.getOrphanageProfilePic()));
+CompletableFuture<String> adminPicFuture = null;
 
-        orphanage.setAdminProfilePic(imageUploadService.uploadImage(request.getAdminProfilePic()));
+
+            if(request.getPanPhoto() != null
+        && !request.getPanPhoto().isEmpty()){
+
+    panPhotoFuture =
+            imageUploadService.uploadImageAsync(
+                    request.getPanPhoto()
+            );
+}
+
+    if(request.getJjActCertificatePhoto() != null
+        && !request.getJjActCertificatePhoto().isEmpty()){
+
+    jjActFuture =
+            imageUploadService.uploadImageAsync(
+                    request.getJjActCertificatePhoto()
+            );
+}
+
+    if(request.getOrphanageProfilePic() != null
+        && !request.getOrphanageProfilePic().isEmpty()){
+
+    orphanagePicFuture =
+            imageUploadService.uploadImageAsync(
+                    request.getOrphanageProfilePic()
+            );
+}
+
+if(request.getAdminProfilePic() != null
+        && !request.getAdminProfilePic().isEmpty()){
+
+    adminPicFuture =
+            imageUploadService.uploadImageAsync(
+                    request.getAdminProfilePic()
+            );
+}
+
+// PAN
+
+if(panPhotoFuture != null){
+
+    orphanage.setPanPhoto(
+            panPhotoFuture.join()
+    );
+}
+
+// JJ CERTIFICATE
+
+if(jjActFuture != null){
+
+    orphanage.setJjActCertificatePhoto(
+            jjActFuture.join()
+    );
+}
+
+// ORPHANAGE PIC
+
+if(orphanagePicFuture != null){
+
+    orphanage.setOrphanageProfilePic(
+            orphanagePicFuture.join()
+    );
+}
+
+// ADMIN PIC
+
+if(adminPicFuture != null){
+
+    orphanage.setAdminProfilePic(
+            adminPicFuture.join()
+    );
+}
+
+
+
+
 
         String carebridgeId = "CB-ORP"+"-"+Year.now()+"-"+
                 UUID.randomUUID().toString().replace("-", "")
@@ -244,14 +316,50 @@ public class OrphanageProfileService {
         );
     }
 
-    // 📷 orphanage profile pic
+    CompletableFuture<String> orphanagePicFuture = null;
 
-   profile.setOrphanageProfilePic(imageUploadService.uploadImage(request.getOrphanageProfilePic()));
+CompletableFuture<String> adminPicFuture = null;
 
-    // 📷 admin pic
 
-    profile.setAdminProfilePic(imageUploadService.uploadImage(request.getAdminProfilePic()));
+//  orphanage profile pic
 
+if(request.getOrphanageProfilePic() != null
+        && !request.getOrphanageProfilePic().isEmpty()){
+
+    orphanagePicFuture =
+            imageUploadService.uploadImageAsync(
+                    request.getOrphanageProfilePic()
+            );
+}
+
+
+//  admin pic
+
+if(request.getAdminProfilePic() != null
+        && !request.getAdminProfilePic().isEmpty()){
+
+    adminPicFuture =
+            imageUploadService.uploadImageAsync(
+                    request.getAdminProfilePic()
+            );
+}
+
+
+//  join results
+
+if(orphanagePicFuture != null){
+
+    profile.setOrphanageProfilePic(
+            orphanagePicFuture.join()
+    );
+}
+
+if(adminPicFuture != null){
+
+    profile.setAdminProfilePic(
+            adminPicFuture.join()
+    );
+}
     orphanageProfileRepository.save(profile);
 
 

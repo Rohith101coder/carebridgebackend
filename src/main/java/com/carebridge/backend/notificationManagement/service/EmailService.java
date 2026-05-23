@@ -2,6 +2,7 @@ package com.carebridge.backend.notificationManagement.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ public class EmailService {
     
     private final JavaMailSender mailSender;
 
+    @Async    
     public void sendOtp(String toEmail, String otp){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
@@ -21,6 +23,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+        @Async
     public void donorProfileNotification(String toEmail, String donorName){
         String subject = "Thank You for Joining CareBridge";
 
@@ -50,6 +53,7 @@ public class EmailService {
         
     }
 
+    @Async
     public void orpProfileNotification(String toEmail, String orpAdminName){
 
         String subject = "Thank You for Registering Your Orphanage with CareBridge";
@@ -82,6 +86,7 @@ Team CareBridge
     }
 
 
+    @Async
     public void donorApproveNotification(String toEmail, String donorName, String donId){
         String subject = "Your CareBridge Donor Profile Has Been Approved";
         String body = """
@@ -112,6 +117,7 @@ Team CareBridge
                 mailSender.send(message);
     }
 
+    @Async
     public void donorRejectionNotification(String toEmail, String reason, String donorName) {
 
     String subject = "Update Regarding Your CareBridge Donor Profile";
@@ -146,6 +152,7 @@ Team CareBridge
     mailSender.send(message);
 }
 
+        @Async
        public void approveOrpNotification(String toEmail, String orpAdminName, String orpName, String orpId) {
 
     String subject = "Your Orphanage Profile Has Been Approved";
@@ -178,6 +185,7 @@ Team CareBridge
     mailSender.send(message);
 }
 
+        @Async
         public void rejectOrpNotification(String toEmail,
                                   String orpAdminName,
                                   String orpName,

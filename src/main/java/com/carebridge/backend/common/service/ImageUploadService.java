@@ -1,7 +1,9 @@
 package com.carebridge.backend.common.service;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,19 +17,31 @@ public class ImageUploadService {
 
     private final Cloudinary cloudinary;
 
-    public String uploadImage(MultipartFile file){
+    @Async
+public CompletableFuture<String> uploadImageAsync(
+        MultipartFile file
+){
 
-        try{
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of());
+    try{
 
-            return uploadResult.get("secure_url")
-            .toString();
-        }
-        catch(Exception e){
-            throw new RuntimeException(
-                    "Failed to upload image"
-            );
-        }
+        Map uploadResult =
+                cloudinary.uploader().upload(
+                        file.getBytes(),
+                        Map.of()
+                );
+
+        String url =
+                uploadResult.get("secure_url")
+                        .toString();
+
+        return CompletableFuture.completedFuture(url);
+
+    }catch(Exception e){
+
+        throw new RuntimeException(
+                "Image upload failed"
+        );
     }
+}
     
 }

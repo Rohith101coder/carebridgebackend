@@ -3,6 +3,7 @@ package com.carebridge.backend.donorManagement.service;
 // import java.io.IOException;
 import java.time.Year;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -72,10 +73,23 @@ public class DonorProfileService {
 
             String donorId = "CB-DON-"+Year.now().getValue()+"-"+UUID.randomUUID().toString().replace("-", "")
             .substring(0,6).toUpperCase();
-                String profilePic = imageUploadService.uploadImage(request.getProfilePic());
-                donor.setProfilePic(profilePic);
 
-                String panPhotoUrl = imageUploadService.uploadImage(request.getPanPhoto());
+
+               CompletableFuture<String> profilePicFuture =
+        imageUploadService.uploadImageAsync(
+                request.getProfilePic()
+        );
+
+CompletableFuture<String> panPhotoFuture =
+        imageUploadService.uploadImageAsync(
+                request.getPanPhoto()
+        );
+
+String profilePicUrl = profilePicFuture.join();
+
+String panPhotoUrl = panPhotoFuture.join();
+
+                  donor.setProfilePic(profilePicUrl);
                 donor.setPanPhoto(panPhotoUrl);
 
             donor.setCareBridgeID(donorId);
@@ -150,19 +164,49 @@ public class DonorProfileService {
             );
         }
 
-         // 📷 update profile pic
-        if (request.getProfilePic() != null
-                && !request.getProfilePic().isEmpty()) {
+       CompletableFuture<String> profilePicFuture = null;
 
-           donor.setProfilePic(imageUploadService.uploadImage(request.getProfilePic()));
-        }
+CompletableFuture<String> panPhotoFuture = null;
 
-        // 📷 update pan photo
-        if (request.getPanPhoto() != null
-                && !request.getPanPhoto().isEmpty()) {
+// 📷 upload profile pic
 
-            donor.setPanPhoto(imageUploadService.uploadImage(request.getPanPhoto()));
-        }
+if(request.getProfilePic() != null
+        && !request.getProfilePic().isEmpty()){
+
+    profilePicFuture =
+            imageUploadService.uploadImageAsync(
+                    request.getProfilePic()
+            );
+}
+
+// 📷 upload pan photo
+
+if(request.getPanPhoto() != null
+        && !request.getPanPhoto().isEmpty()){
+
+    panPhotoFuture =
+            imageUploadService.uploadImageAsync(
+                    request.getPanPhoto()
+            );
+}
+
+// profile pic
+
+if(profilePicFuture != null){
+
+    donor.setProfilePic(
+            profilePicFuture.join()
+    );
+}
+
+// pan photo
+
+if(panPhotoFuture != null){
+
+    donor.setPanPhoto(
+            panPhotoFuture.join()
+    );
+}
 
         donorProfileRepository.save(donor);
 

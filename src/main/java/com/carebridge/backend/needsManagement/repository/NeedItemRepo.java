@@ -20,5 +20,5 @@ public interface NeedItemRepo extends JpaRepository<NeedItem, Long>{
 
     void deleteByNeedItemId(String id);
 
-    List<NeedItem> getgetByOrphanageCareBridgeId(String id);
+    List<NeedItem> getByOrphanageCareBridgeId(String id);
 }

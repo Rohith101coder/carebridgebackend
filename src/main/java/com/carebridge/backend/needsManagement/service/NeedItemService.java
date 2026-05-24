@@ -231,7 +231,7 @@ public class NeedItemService {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("user not present"));
         OrphanageProfile profile = orphanageProfileRepository.findByUser(user).orElseThrow(()-> new OrphanageProfileNotFoundException("profile not found"));
-        List<NeedItem> activeItems = needItemRepo.getgetByOrphanageCareBridgeId(profile.getCarebridgeId());
+        List<NeedItem> activeItems = needItemRepo.getByOrphanageCareBridgeId(profile.getCarebridgeId());
         return activeItems;
     }
 }

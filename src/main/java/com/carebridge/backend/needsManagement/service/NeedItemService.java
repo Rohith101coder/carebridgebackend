@@ -235,6 +235,15 @@ public class NeedItemService {
         List<NeedItem> activeItems = needItemRepo.getByOrphanageCareBridgeId(profile.getCarebridgeId());
         return activeItems;
     }
+
+
+
+    public List<NeedItem> getAllNeeds(){
+
+        List<NeedItem> needs = needItemRepo.findAll();
+
+        return needs;
+    }
 }
 
 

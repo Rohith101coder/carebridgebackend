@@ -30,4 +30,22 @@ public class NeedGlobalException {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
     
-}
+
+    @ExceptionHandler(ItemNotFound.class)
+    public ResponseEntity<ErrorResponse> handleItemNotFound(
+        ItemNotFound ex, WebRequest request
+    ){
+          ErrorResponse error = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), request.getDescription(false).replace("uri=", ""));
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+
+    @ExceptionHandler(CommonException.class)
+        public ResponseEntity<ExceptionResponse> handleCommon(
+            CommonException ex
+        ){
+            ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        }
+    }
+

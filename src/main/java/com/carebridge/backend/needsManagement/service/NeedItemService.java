@@ -88,6 +88,7 @@ public class NeedItemService {
         item.setCategory(request.getCategory());
         item.setQuantity(request.getQuantity());
         item.setFulfilledQuantity(0);
+        item.setReservedQuantity(0);
         item.setPricePerQuantity(request.getPricePerQuantity());
         item.setPriority(request.getPriority());
         item.setProductLinks(request.getProductLinks());

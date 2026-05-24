@@ -51,6 +51,9 @@ public class NeedItem {
     private Integer fulfilledQuantity = 0;
 
     @Column(nullable = false)
+    private Integer reservedQuantity = 0;
+
+    @Column(nullable = false)
     private BigDecimal pricePerQuantity;
 
     @Enumerated(EnumType.STRING)

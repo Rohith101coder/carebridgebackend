@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.carebridge.backend.donationManagement.dto.DonationDTO;
 import com.carebridge.backend.donationManagement.dto.DonationRequestDTO;
 import com.carebridge.backend.donationManagement.dto.DonationResponse;
 import com.carebridge.backend.donationManagement.service.DonationService;
@@ -43,17 +44,18 @@ public ResponseEntity<DonationResponse> donate(
 
 
 @GetMapping("/pending-donations")
-    public ResponseEntity<List<DonationRequestDTO>> getMyPendingDonations(){
+    public ResponseEntity<List<DonationDTO>> getMyPendingDonations(){
 
-        List<DonationRequestDTO> pendings = donorDonationService.getMyPendingDonations();
+        List<DonationDTO> pendings = donorDonationService.getMyPendingDonations();
 
         return ResponseEntity.ok(pendings);
     }
 
-    @GetMapping("/completed-donations")
-    public ResponseEntity<List<DonationRequestDTO>> getMyCompletedDonations(){
 
-        List<DonationRequestDTO> completed = donorDonationService.getMyCompletedDonations();
+    @GetMapping("/completed-donations")
+    public ResponseEntity<List<DonationDTO>> getMyCompletedDonations(){
+
+        List<DonationDTO> completed = donorDonationService.getMyCompletedDonations();
 
         return ResponseEntity.ok(completed);
     }
@@ -64,5 +66,24 @@ public ResponseEntity<DonationResponse> donate(
         DonationResponse response = donorDonationService.deleteDonation(id);
         return ResponseEntity.ok(response);
     }
+
+
+    @GetMapping("/cancelled-donations")
+    public ResponseEntity<List<DonationDTO>> getMyCancelledDonations(){
+
+        List<DonationDTO> cancelled = donorDonationService.getMyCancelledDonations();
+
+        return ResponseEntity.ok(cancelled);
+    }
+
+    @GetMapping("/delivered-donations")
+    public ResponseEntity<List<DonationDTO>> getMyDeliveredDonations(){
+
+        List<DonationDTO> delivered = donorDonationService.getMyCancelledDonations();
+
+        return ResponseEntity.ok(delivered);
+    }
+
+
 
 }

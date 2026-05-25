@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 import com.carebridge.backend.adminManagement.exception.DonorProfileNotFoundException;
 import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.authManagement.repository.UserRepository;
-import com.carebridge.backend.donationManagement.dto.DonationRequestDTO;
+import com.carebridge.backend.donationManagement.dto.DonationDTO;
+// import com.carebridge.backend.donationManagement.dto.DonationRequestDTO;
 import com.carebridge.backend.donationManagement.dto.DonationResponse;
 import com.carebridge.backend.donationManagement.entity.DonationRequest;
 import com.carebridge.backend.donationManagement.enums.DonationStatus;
@@ -41,7 +42,7 @@ public class DonorDonationService {
     private final EmailService emailService;
 
 
-    public List<DonationRequestDTO> getMyPendingDonations(){
+    public List<DonationDTO> getMyPendingDonations(){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -50,10 +51,11 @@ public class DonorDonationService {
         String donorId = profile.getCareBridgeID();
 
         List<DonationRequest> list = donationRequestRepo.findByDonorCareBridgeIdAndDonationStatus(donorId, DonationStatus.PENDING);
-        List<DonationRequestDTO> pendingDonations = new ArrayList<>();
+        List<DonationDTO> pendingDonations = new ArrayList<>();
 
         for(DonationRequest request : list){
-            DonationRequestDTO requestDTO = new DonationRequestDTO();
+            DonationDTO requestDTO = new DonationDTO();
+            requestDTO.setDonationId(request.getDonationRequestId());
             requestDTO.setNeedItemId(request.getNeedItemId());
             requestDTO.setDonationType(request.getDonationType());
             requestDTO.setExpectedDeliveryDate(request.getExpectedDeliveryDate());
@@ -68,8 +70,7 @@ public class DonorDonationService {
         return pendingDonations;
     }
 
-    public List<DonationRequestDTO> getMyCompletedDonations(){
-
+    public List<DonationDTO> getMyCompletedDonations(){
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("user not found"));
@@ -77,10 +78,11 @@ public class DonorDonationService {
         String donorId = profile.getCareBridgeID();
 
         List<DonationRequest> list = donationRequestRepo.findByDonorCareBridgeIdAndDonationStatus(donorId, DonationStatus.DELIVERED);
-        List<DonationRequestDTO> pendingDonations = new ArrayList<>();
+        List<DonationDTO> completedDonations = new ArrayList<>();
 
         for(DonationRequest request : list){
-            DonationRequestDTO requestDTO = new DonationRequestDTO();
+            DonationDTO requestDTO = new DonationDTO();
+            requestDTO.setDonationId(request.getDonationRequestId());
             requestDTO.setNeedItemId(request.getNeedItemId());
             requestDTO.setDonationType(request.getDonationType());
             requestDTO.setExpectedDeliveryDate(request.getExpectedDeliveryDate());
@@ -89,9 +91,9 @@ public class DonorDonationService {
             requestDTO.setOrderPicString(request.getOrderProofImageUrl());
             requestDTO.setPlatformName(request.getPlatformName());
             requestDTO.setTrackingId(request.getTrackingId());
-            pendingDonations.add(requestDTO);
+            completedDonations.add(requestDTO);
         }
-        return pendingDonations;
+        return completedDonations;
     }
 
 
@@ -103,9 +105,13 @@ public class DonorDonationService {
         DonorProfile profile = donorProfileRepository.findByUser(user).orElseThrow(()-> new DonorProfileNotFoundException("donor not found"));
         String donorId = profile.getCareBridgeID();
         DonationRequest donation = donationRequestRepo.findByDonationRequestIdAndDonorCareBridgeId(id, donorId).orElseThrow(()-> new CommonException("You cannot delete this"));
+        if(donation.getDonationStatus().equals(DonationStatus.CANCELLED)){
+            throw new CommonException("this donation already cancelled");
+        }
         NeedItem item = needItemRepo.findByNeedItemId(donation.getNeedItemId()).orElseThrow(()-> new CommonException("item not found"));
         OrphanageProfile orpProfile = orphanageProfileRepository.findByCarebridgeId(donation.getOrphanageCareBridgeId()).orElseThrow(()-> new CommonException("orphanage not found"));
         Integer donorQuantity = donation.getQuantity();
+
         if(donation != null){
             item.setReservedQuantity(item.getReservedQuantity() - donorQuantity);
             donation.setDonationStatus(DonationStatus.CANCELLED);
@@ -117,4 +123,62 @@ public class DonorDonationService {
         }
         return new DonationResponse("donation cancelled",id);
     }
+
+    public List<DonationDTO> getMyCancelledDonations(){
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("user not found"));
+        DonorProfile profile = donorProfileRepository.findByUser(user).orElseThrow(()-> new DonorProfileNotFoundException("donor not found"));
+        String donorId = profile.getCareBridgeID();
+
+        List<DonationRequest> list = donationRequestRepo.findByDonorCareBridgeIdAndDonationStatus(donorId, DonationStatus.CANCELLED);
+        List<DonationDTO> cancelledDonations = new ArrayList<>();
+
+        for(DonationRequest request : list){
+            DonationDTO requestDTO = new DonationDTO();
+            requestDTO.setDonationId(request.getDonationRequestId());
+            requestDTO.setNeedItemId(request.getNeedItemId());
+            requestDTO.setDonationType(request.getDonationType());
+            requestDTO.setExpectedDeliveryDate(request.getExpectedDeliveryDate());
+            requestDTO.setExpectedVisitDateTime(request.getExpectedVisitDateTime());
+            requestDTO.setMessage(request.getMessage());
+            requestDTO.setOrderPicString(request.getOrderProofImageUrl());
+            requestDTO.setPlatformName(request.getPlatformName());
+            requestDTO.setTrackingId(request.getTrackingId());
+            cancelledDonations.add(requestDTO);
+        }
+        return cancelledDonations;
+    }
+
+
+     public List<DonationDTO> getMyDeliveredDonations(){
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("user not found"));
+        DonorProfile profile = donorProfileRepository.findByUser(user).orElseThrow(()-> new DonorProfileNotFoundException("donor not found"));
+        String donorId = profile.getCareBridgeID();
+
+        List<DonationRequest> list = donationRequestRepo.findByDonorCareBridgeIdAndDonationStatus(donorId, DonationStatus.DELIVERED);
+        List<DonationDTO> deliveredDonations = new ArrayList<>();
+
+        for(DonationRequest request : list){
+            DonationDTO requestDTO = new DonationDTO();
+            requestDTO.setDonationId(request.getDonationRequestId());
+            requestDTO.setNeedItemId(request.getNeedItemId());
+            requestDTO.setDonationType(request.getDonationType());
+            requestDTO.setExpectedDeliveryDate(request.getExpectedDeliveryDate());
+            requestDTO.setExpectedVisitDateTime(request.getExpectedVisitDateTime());
+            requestDTO.setMessage(request.getMessage());
+            requestDTO.setOrderPicString(request.getOrderProofImageUrl());
+            requestDTO.setPlatformName(request.getPlatformName());
+            requestDTO.setTrackingId(request.getTrackingId());
+            deliveredDonations.add(requestDTO);
+        }
+        return deliveredDonations;
+    }
+
+
+
+
+
 }

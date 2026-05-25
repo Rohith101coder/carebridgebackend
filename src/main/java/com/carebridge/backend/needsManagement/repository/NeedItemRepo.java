@@ -38,4 +38,6 @@ Optional<NeedItem> findByNeedItemIdForUpdate(
     void deleteByNeedItemId(String id);
 
     List<NeedItem> getByOrphanageCareBridgeId(String id);
+
+    Optional<NeedItem>  findByNeedItemId(String needItemId);
 }

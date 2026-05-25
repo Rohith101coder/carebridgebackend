@@ -23,6 +23,7 @@ import com.carebridge.backend.needsManagement.entity.NeedItem;
 import com.carebridge.backend.needsManagement.exception.CommonException;
 import com.carebridge.backend.needsManagement.exception.ItemNotFound;
 import com.carebridge.backend.needsManagement.repository.NeedItemRepo;
+import com.carebridge.backend.notificationManagement.service.EmailService;
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 import com.carebridge.backend.orphanageManagement.exception.OrphanageProfileNotFoundException;
 import com.carebridge.backend.orphanageManagement.repository.OrphanageProfileRepository;
@@ -45,6 +46,8 @@ public class DonationService {
     private final OrphanageProfileRepository orphanageProfileRepository;
 
     private final ImageUploadService imageUploadService;
+
+    private final EmailService emailService;
 
     @Transactional
     public DonationResponse createDonationRequest(DonationRequestDTO request){
@@ -222,6 +225,23 @@ public class DonationService {
           donationRequestRepo.save(donation);
 
         needItemRepo.save(item);
+        String orpEmail = orphanage.getOrphanageEmail();
+        String donorId = donor.getCareBridgeID();
+        String donorName = donor.getName();
+        String donorPhone = donor.getPhone();
+        String modeOfDonation = request.getDonationType().toString();
+        String donationId = donationRequestId;
+        String needItemId = item.getNeedItemId();
+        String needItemName = item.getName();
+        String expectedDeliveryDate = request.getExpectedDeliveryDate()!=null ? request.getExpectedDeliveryDate().toString() : "Ignore this";
+        String expectedDonationDate = request.getExpectedVisitDateTime() != null ? request.getExpectedVisitDateTime().toString() :"Ignore this";
+        String requiredQuantity = item.getQuantity().toString();
+        String donorDonationQuantity = request.getQuantity().toString();
+        String remaining = (Integer.parseInt(requiredQuantity) - item.getReservedQuantity() )+"";
+
+
+
+        emailService.donationInitiated(orpEmail,donorId,donorName,donorPhone,modeOfDonation,donationId,needItemId,needItemName,expectedDonationDate,expectedDeliveryDate,remainingQuantity+"",donorDonationQuantity,remaining);
 
         return new DonationResponse("Donation request created successfully", donationRequestId);
 }

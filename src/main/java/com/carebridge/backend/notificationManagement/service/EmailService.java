@@ -1,5 +1,7 @@
 package com.carebridge.backend.notificationManagement.service;
 
+// import java.time.LocalDate;
+
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -224,5 +226,141 @@ Team CareBridge
 
     mailSender.send(message);
 }
+
+
+@Async
+public void donationInitiated(String toEmail,
+                              String donorId,
+                              String donorName,
+                              String donorPhone,
+                              String modeOfDonation,
+                              String donationId,
+                              String needItemId,
+                              String needItemName,
+                              String expectedDonationDate,
+                              String expectedDeliveryDate,
+                              String remainingQuantity,
+                              String donorDonationQuantity,
+                              String updatedRemainingQuantity) {
+
+    String scheduleInfo;
+
+    if ("ONLINE_ORDER".equalsIgnoreCase(modeOfDonation)) {
+
+        scheduleInfo = """
+                Expected Delivery Date : %s
+                """.formatted(expectedDeliveryDate);
+
+    } else {
+
+        scheduleInfo = """
+                Expected Donation Visit Date : %s
+                """.formatted(expectedDonationDate);
+    }
+
+    String subject = "New Donation Request Initiated - CareBridge";
+
+    String body = """
+            Dear Orphanage Admin,
+
+            Greetings from CareBridge.
+
+            A donor has initiated a donation request for one of your listed needs.
+
+            Donation Details
+            -----------------------------------
+            Donation ID              : %s
+            Need Item ID             : %s
+            Need Item Name           : %s
+
+            Donor Details
+            -----------------------------------
+            Donor ID                 : %s
+            Donor Name               : %s
+            Donor Phone              : %s
+
+            Donation Information
+            -----------------------------------
+            Mode of Donation         : %s
+            Donated Quantity         : %s
+            Previous Remaining Qty   : %s
+            Updated Remaining Qty    : %s
+
+            %s
+
+            Please review the donation request and proceed with the necessary coordination through the CareBridge platform.
+
+            Thank you for being part of the CareBridge community and supporting children in need.
+
+            Warm regards,
+            Team CareBridge
+            """.formatted(
+                    donationId,
+                    needItemId,
+                    needItemName,
+                    donorId,
+                    donorName,
+                    donorPhone,
+                    modeOfDonation,
+                    donorDonationQuantity,
+                    remainingQuantity,
+                    updatedRemainingQuantity,
+                    scheduleInfo
+            );
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo(toEmail);
+    message.setSubject(subject);
+    message.setText(body);
+
+    mailSender.send(message);
+}
+
+    @Async
+public void donationCancelNotification(String toEmail,
+                                       String donationId,
+                                       String donorId,
+                                       String donorQuantity,
+                                       String updatedRemainingQuantity) {
+
+    String subject = "Donation Request Cancelled - CareBridge";
+
+    String body = """
+            Dear Orphanage Admin,
+
+            Greetings from CareBridge.
+
+            This is to inform you that a donor has cancelled an existing donation request.
+
+            Cancellation Details
+            -----------------------------------
+            Donation ID              : %s
+            Donor ID                 : %s
+            Cancelled Quantity       : %s
+            Updated Remaining Qty    : %s
+
+            The required quantity has been updated accordingly in the system.
+
+            Please review the updated need status on the CareBridge platform.
+
+            Thank you for your continued support and cooperation.
+
+            Warm regards,
+            Team CareBridge
+            """.formatted(
+                    donationId,
+                    donorId,
+                    donorQuantity,
+                    updatedRemainingQuantity
+            );
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo(toEmail);
+    message.setSubject(subject);
+    message.setText(body);
+
+    mailSender.send(message);
+}
+
 
 }

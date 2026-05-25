@@ -13,17 +13,20 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+
 public class ImageUploadService {
 
     private final Cloudinary cloudinary;
 
     @Async
+     @SuppressWarnings("rawtypes")
 public CompletableFuture<String> uploadImageAsync(
         MultipartFile file
 ){
 
     try{
 
+       
         Map uploadResult =
                 cloudinary.uploader().upload(
                         file.getBytes(),

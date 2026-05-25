@@ -1,9 +1,14 @@
 package com.carebridge.backend.needsManagement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.carebridge.backend.needsManagement.entity.NeedItem;
 import com.carebridge.backend.needsManagement.enums.CategoryType;
+
+import jakarta.persistence.LockModeType;
 
 import java.util.List;
 // import java.util.List;
@@ -16,7 +21,19 @@ public interface NeedItemRepo extends JpaRepository<NeedItem, Long>{
         String name, CategoryType category, String orphanageId
     );
 
-    Optional<NeedItem> findByNeedItemId(String needItemId);
+    // Optional<NeedItem> findByNeedItemId(String needItemId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+
+@Query("""
+    SELECT n
+    FROM NeedItem n
+    WHERE n.needItemId = :needItemId
+""")
+Optional<NeedItem> findByNeedItemIdForUpdate(
+        @Param("needItemId")
+        String needItemId
+);
 
     void deleteByNeedItemId(String id);
 

@@ -27,6 +27,7 @@ import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 import com.carebridge.backend.orphanageManagement.exception.OrphanageProfileNotFoundException;
 import com.carebridge.backend.orphanageManagement.repository.OrphanageProfileRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -45,6 +46,7 @@ public class DonationService {
 
     private final ImageUploadService imageUploadService;
 
+    @Transactional
     public DonationResponse createDonationRequest(DonationRequestDTO request){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -63,7 +65,7 @@ public class DonationService {
 
               NeedItem item =
                 needItemRepo
-                        .findByNeedItemId(
+                        .findByNeedItemIdForUpdate(
                                 request.getNeedItemId()
                         )
                         .orElseThrow(() ->

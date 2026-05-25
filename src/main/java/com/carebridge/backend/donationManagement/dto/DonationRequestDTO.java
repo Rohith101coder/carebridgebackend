@@ -37,4 +37,6 @@ public class DonationRequestDTO {
     private String trackingId;
 
     private String message;
+
+    private String orderPicString;
 }

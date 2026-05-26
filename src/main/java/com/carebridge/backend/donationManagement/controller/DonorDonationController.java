@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.carebridge.backend.donationManagement.dto.DonationDTO;
 import com.carebridge.backend.donationManagement.dto.DonationRequestDTO;
 import com.carebridge.backend.donationManagement.dto.DonationResponse;
+import com.carebridge.backend.donationManagement.dto.DonationUpdateRequest;
 import com.carebridge.backend.donationManagement.service.DonationService;
 import com.carebridge.backend.donationManagement.service.DonorDonationService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -83,6 +86,28 @@ public ResponseEntity<DonationResponse> donate(
 
         return ResponseEntity.ok(delivered);
     }
+
+    @PatchMapping(
+        value = "/update/{donationId}",
+        consumes = {"multipart/form-data"}
+)
+public ResponseEntity<DonationResponse> updateDonation(
+
+        @PathVariable
+        String donationId,
+
+        @ModelAttribute
+        DonationUpdateRequest request
+){
+
+    DonationResponse response =
+            donorDonationService.updateDonation(
+                    request,
+                    donationId
+            );
+
+    return ResponseEntity.ok(response);
+}
 
 
 

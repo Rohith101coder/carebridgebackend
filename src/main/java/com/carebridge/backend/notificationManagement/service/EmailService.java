@@ -363,4 +363,87 @@ public void donationCancelNotification(String toEmail,
 }
 
 
+@Async
+public void donationUpdateNotification(String toEmail,
+                                       String donationId,
+                                       String donorId,
+                                       String donorName,
+                                       String needItemId,
+                                       String needItemName,
+                                       String donationType,
+                                       Integer updatedQuantity,
+                                       Integer remainingQuantity,
+                                       String expectedVisitDate,
+                                       String expectedDeliveryDate) {
+
+    String scheduleInfo;
+
+    if ("ONLINE_ORDER".equalsIgnoreCase(donationType)) {
+
+        scheduleInfo = """
+                Expected Delivery Date : %s
+                """.formatted(expectedDeliveryDate);
+
+    } else {
+
+        scheduleInfo = """
+                Expected Visit Date    : %s
+                """.formatted(expectedVisitDate);
+    }
+
+    String subject = "Donation Request Updated - CareBridge";
+
+    String body = """
+            Dear Orphanage Admin,
+
+            Greetings from CareBridge.
+
+            A donor has updated an existing donation request associated with one of your listed needs.
+
+            Donation Details
+            -----------------------------------
+            Donation ID              : %s
+            Need Item ID             : %s
+            Need Item Name           : %s
+
+            Donor Details
+            -----------------------------------
+            Donor ID                 : %s
+            Donor Name               : %s
+
+            Updated Donation Information
+            -----------------------------------
+            Donation Type            : %s
+            Updated Quantity         : %d
+            Remaining Quantity       : %d
+
+            %s
+
+            Please review the updated donation details on the CareBridge platform.
+
+            Thank you for your continued support and cooperation.
+
+            Warm regards,
+            Team CareBridge
+            """.formatted(
+                    donationId,
+                    needItemId,
+                    needItemName,
+                    donorId,
+                    donorName,
+                    donationType,
+                    updatedQuantity,
+                    remainingQuantity,
+                    scheduleInfo
+            );
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo(toEmail);
+    message.setSubject(subject);
+    message.setText(body);
+
+    mailSender.send(message);
+}
+
+
 }

@@ -14,4 +14,6 @@ public interface DonationRequestRepo extends JpaRepository<DonationRequest, Long
     List<DonationRequest> findByDonorCareBridgeIdAndDonationStatus(String donorCareBridgeId, DonationStatus donationStatus);
 
     Optional<DonationRequest> findByDonationRequestIdAndDonorCareBridgeId(String donationId, String donorId);
+
+    Optional<DonationRequest>  findByDonationRequestId(String donationRequestId);
 }

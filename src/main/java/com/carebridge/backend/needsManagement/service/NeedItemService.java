@@ -241,10 +241,22 @@ public class NeedItemService {
 
     public List<NeedItem> getAllNeeds(){
 
-        List<NeedItem> needs = needItemRepo.findAll();
+    List<NeedItem> needs =
+            needItemRepo.findAll();
 
-        return needs;
-    }
+    return needs.stream()
+
+           
+
+            .filter(need ->
+
+                    need.getFulfilledQuantity()
+                    <
+                    need.getQuantity()
+            )
+
+            .toList();
+}
 }
 
 

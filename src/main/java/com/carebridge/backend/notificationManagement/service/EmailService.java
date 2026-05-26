@@ -446,4 +446,81 @@ public void donationUpdateNotification(String toEmail,
 }
 
 
+@Async
+public void donationDeliveredNotification(String toEmail,
+                                          String donationId,
+                                          String orphanageId,
+                                          String orphanageName,
+                                          String donatedQuantity,
+                                          String itemName,
+                                          String donationStatus,
+                                          String note,
+                                          String deliveredPhotoUrl,
+                                          String deliveredDate,
+                                          String donationInitiatedDate) {
+
+    String subject = "Your Donation Has Been Successfully Delivered - CareBridge";
+
+    String body = """
+            Dear Donor,
+
+            Greetings from CareBridge.
+
+            We are happy to inform you that your donation has been successfully delivered to the orphanage.
+
+            Delivery Details
+            -----------------------------------
+            Donation ID              : %s
+            Orphanage ID             : %s
+            Orphanage Name           : %s
+
+            Donation Information
+            -----------------------------------
+            Item Name                : %s
+            Donated Quantity         : %s
+            Donation Status          : %s
+
+            Timeline
+            -----------------------------------
+            Donation Initiated Date  : %s
+            Delivered Date           : %s
+
+            Message From Orphanage
+            -----------------------------------
+            %s
+
+            Delivered Item Photo
+            -----------------------------------
+            %s
+
+            Thank you for your kindness and contribution toward supporting children in need. Your support truly creates a meaningful impact.
+
+            We sincerely appreciate your generosity and being part of the CareBridge community.
+
+            Warm regards,
+            Team CareBridge
+            """.formatted(
+                    donationId,
+                    orphanageId,
+                    orphanageName,
+                    itemName,
+                    donatedQuantity,
+                    donationStatus,
+                    donationInitiatedDate,
+                    deliveredDate,
+                    note != null && !note.isBlank()
+                            ? note
+                            : "No additional note provided.",
+                    deliveredPhotoUrl
+            );
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo(toEmail);
+    message.setSubject(subject);
+    message.setText(body);
+
+    mailSender.send(message);
+}
+
+
 }

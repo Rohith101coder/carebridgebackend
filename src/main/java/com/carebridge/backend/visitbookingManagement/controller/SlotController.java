@@ -10,7 +10,7 @@ import com.carebridge.backend.visitbookingManagement.dto.SlotRequest;
 import com.carebridge.backend.visitbookingManagement.dto.SlotResponse;
 import com.carebridge.backend.visitbookingManagement.service.SlotService;
 
-import jakarta.validation.Valid;
+// import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController

@@ -1,5 +1,8 @@
 package com.carebridge.backend.notificationManagement.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 // import java.time.LocalDate;
 
 import org.springframework.mail.SimpleMailMessage;
@@ -512,6 +515,83 @@ public void donationDeliveredNotification(String toEmail,
                             ? note
                             : "No additional note provided.",
                     deliveredPhotoUrl
+            );
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo(toEmail);
+    message.setSubject(subject);
+    message.setText(body);
+
+    mailSender.send(message);
+}
+
+
+@Async
+public void bookingNotification(String toEmail,
+                                String bookingId,
+                                String slotId,
+                                Integer numberOfVisitors,
+                                Integer availableCapacity,
+                                String donorId,
+                                String donorName,
+                                String donorPhone,
+                                String donorMessage,
+                                LocalDate slotDate,
+                                LocalTime startTime,
+                                LocalTime endTime) {
+
+    String subject = "New Visit Booking Request - CareBridge";
+
+    String body = """
+            Dear Orphanage Admin,
+
+            Greetings from CareBridge.
+
+            A donor has successfully booked a visit slot for your orphanage.
+
+            Booking Details
+            -----------------------------------
+            Booking ID               : %s
+            Slot ID                 : %s
+            Number Of Visitors      : %d
+            Remaining Slot Capacity : %d
+
+            Donor Details
+            -----------------------------------
+            Donor ID                : %s
+            Donor Name              : %s
+            Donor Phone             : %s
+
+            Visit Schedule
+            -----------------------------------
+            Visit Date              : %s
+            Start Time              : %s
+            End Time                : %s
+
+            Donor Message
+            -----------------------------------
+            %s
+
+            Please review the booking details in the CareBridge platform and coordinate further if required.
+
+            Thank you for being part of the CareBridge community.
+
+            Warm regards,
+            Team CareBridge
+            """.formatted(
+                    bookingId,
+                    slotId,
+                    numberOfVisitors,
+                    availableCapacity,
+                    donorId,
+                    donorName,
+                    donorPhone,
+                    slotDate,
+                    startTime,
+                    endTime,
+                    donorMessage != null && !donorMessage.isBlank()
+                            ? donorMessage
+                            : "No message provided."
             );
 
     SimpleMailMessage message = new SimpleMailMessage();

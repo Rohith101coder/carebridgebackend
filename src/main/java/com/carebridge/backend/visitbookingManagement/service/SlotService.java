@@ -2,6 +2,7 @@ package com.carebridge.backend.visitbookingManagement.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
@@ -162,4 +163,40 @@ public SlotResponse createSlot(
             slotId
     );
 }
+
+
+        public List<Slot> getAllSlots(){
+
+                 Authentication authentication =
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
+
+    String email = authentication.getName();
+
+    User user =
+            userRepository
+                    .findByEmail(email)
+                    .orElseThrow(() ->
+                            new UserNotFoundException(
+                                    "User not found"
+                            ));
+
+    OrphanageProfile orphanage =
+            orphanageProfileRepository
+                    .findByUser(user)
+                    .orElseThrow(() ->
+                            new OrphanageProfileNotFoundException(
+                                    "Orphanage not found"
+                            ));
+
+        List<Slot> slots = slotRepo.findByOrphanageCareBridgeId(orphanage.getCarebridgeId());
+                
+
+                return slots;
+                
+        }
+
+
+        
 }

@@ -1,13 +1,22 @@
 package com.carebridge.backend.visitbookingManagement.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.carebridge.backend.visitbookingManagement.dto.BookingRejectionRequest;
 import com.carebridge.backend.visitbookingManagement.dto.SlotRequest;
 import com.carebridge.backend.visitbookingManagement.dto.SlotResponse;
+import com.carebridge.backend.visitbookingManagement.dto.VisitBookingResponse;
+import com.carebridge.backend.visitbookingManagement.entity.VisitBooking;
+import com.carebridge.backend.visitbookingManagement.service.OrpSlotService;
 import com.carebridge.backend.visitbookingManagement.service.SlotService;
 
 // import jakarta.validation.Valid;
@@ -19,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class SlotController {
 
     private final SlotService slotService;
+    private final OrpSlotService orpSlotService;
 
   
 
@@ -35,4 +45,55 @@ public class SlotController {
 
         return ResponseEntity.ok(response);
     }
+
+
+     @GetMapping("/pending")
+    public ResponseEntity<List<VisitBooking>> getPendingBookings(){
+
+        List<VisitBooking> response =
+                orpSlotService.getPendingBookings();
+
+        return ResponseEntity.ok(response);
+    }
+
+     @PatchMapping("/confirm/{bookingId}")
+    public ResponseEntity<VisitBookingResponse> confirmBooking(
+
+            @PathVariable
+            String bookingId
+    ){
+
+        VisitBookingResponse response =
+                orpSlotService.confirmBooking(
+                        bookingId
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+       @PatchMapping("/reject/{bookingId}")
+    public ResponseEntity<VisitBookingResponse> rejectBooking(
+
+            @PathVariable
+            String bookingId,
+
+            @RequestBody
+            BookingRejectionRequest request
+    ){
+
+        VisitBookingResponse response =
+                orpSlotService.rejectBooking(
+                        bookingId,
+                        request
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
+
+
+
 }

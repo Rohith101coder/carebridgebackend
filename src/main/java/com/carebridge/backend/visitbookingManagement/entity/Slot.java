@@ -56,7 +56,7 @@ public class Slot {
     private Integer maxVisitors;
 
     @Column(nullable = false)
-    private Integer bookedCount = 0;
+    private Integer bookedCount ;
 
 
     @Enumerated(EnumType.STRING)

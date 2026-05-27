@@ -2,6 +2,7 @@ package com.carebridge.backend.notificationManagement.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 // import java.time.LocalDate;
 
@@ -9,6 +10,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -592,6 +595,141 @@ public void bookingNotification(String toEmail,
                     donorMessage != null && !donorMessage.isBlank()
                             ? donorMessage
                             : "No message provided."
+            );
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo(toEmail);
+    message.setSubject(subject);
+    message.setText(body);
+
+    mailSender.send(message);
+}
+
+
+@Async
+public void bookingRejectedMail(String toEmail,
+                                String donorName,
+                                String bookingId,
+                                String rejectionReason) {
+
+    String subject = "Your Visit Booking Has Been Rejected - CareBridge";
+
+    String body = """
+            Dear %s,
+
+            Greetings from CareBridge.
+
+            We regret to inform you that your orphanage visit booking request could not be approved at this time.
+
+            Booking Details
+            -----------------------------------
+            Booking ID              : %s
+            Booking Status          : REJECTED
+
+            Reason For Rejection
+            -----------------------------------
+            %s
+
+            You may review the reason provided and book another available slot if applicable.
+
+            Thank you for your understanding and continued support toward helping children in need.
+
+            Warm regards,
+            Team CareBridge
+            """.formatted(
+                    donorName,
+                    bookingId,
+                    rejectionReason != null && !rejectionReason.isBlank()
+                            ? rejectionReason
+                            : "No specific reason provided."
+            );
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo(toEmail);
+    message.setSubject(subject);
+    message.setText(body);
+
+    mailSender.send(message);
+}
+
+
+@Async
+public void bookingConfirmationMail(String toEmail,
+                                    String donorName,
+                                    String bookingId,
+                                    LocalDate visitDate,
+                                    LocalTime startTime,
+                                    LocalTime endTime,
+                                    Integer numberOfVisitors,
+                                    VisitBookingStatus bookingStatus,
+                                    String orphanageName,
+                                    String district,
+                                    String state,
+                                    String websiteLink,
+                                    String socialMediaLinks) {
+
+    String socialLinks = (socialMediaLinks != null && !socialMediaLinks.isEmpty())
+            ? String.join(", ", socialMediaLinks)
+            : "No social media links available";
+
+    String website = (websiteLink != null && !websiteLink.isBlank())
+            ? websiteLink
+            : "Not Available";
+
+    String subject = "Your Visit Booking Has Been Confirmed - CareBridge";
+
+    String body = """
+            Dear %s,
+
+            Greetings from CareBridge.
+
+            We are pleased to inform you that your orphanage visit booking has been successfully confirmed.
+
+            Booking Details
+            -----------------------------------
+            Booking ID              : %s
+            Booking Status          : %s
+            Number Of Visitors      : %d
+
+            Visit Schedule
+            -----------------------------------
+            Visit Date              : %s
+            Start Time              : %s
+            End Time                : %s
+
+            Orphanage Details
+            -----------------------------------
+            Orphanage Name          : %s
+            District                : %s
+            State                   : %s
+
+            Website
+            -----------------------------------
+            %s
+
+            Social Media Links
+            -----------------------------------
+            %s
+
+            Please ensure you arrive on time and coordinate responsibly during your visit.
+
+            Thank you for your kindness and support toward children in need.
+
+            Warm regards,
+            Team CareBridge
+            """.formatted(
+                    donorName,
+                    bookingId,
+                    bookingStatus,
+                    numberOfVisitors,
+                    visitDate,
+                    startTime,
+                    endTime,
+                    orphanageName,
+                    district,
+                    state,
+                    website,
+                    socialLinks
             );
 
     SimpleMailMessage message = new SimpleMailMessage();

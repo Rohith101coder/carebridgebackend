@@ -32,6 +32,7 @@ import com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus;
 import com.carebridge.backend.visitbookingManagement.repository.SlotRepo;
 import com.carebridge.backend.visitbookingManagement.repository.VisitBookingRepo;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -78,7 +79,7 @@ public class DonorSlotService {
 
 
 
-
+@Transactional
 public VisitBookingResponse createVisitBooking(
     VisitBookingRequest request
 ){
@@ -202,6 +203,10 @@ public VisitBookingResponse createVisitBooking(
             request.getNumberOfVisitors()
     );
 
+    System.out.println("-------------------------");
+    System.out.println(slot.getBookedCount());
+    System.out.println("-----------------------------");
+
 
 
          if(slot.getBookedCount()
@@ -215,6 +220,8 @@ public VisitBookingResponse createVisitBooking(
       visitBookingRepo.save(booking);
 
     slotRepo.save(slot);
+
+    
        availableCapacity =
             slot.getMaxVisitors()
             -

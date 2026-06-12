@@ -40,9 +40,10 @@ public CompletableFuture<String> uploadImageAsync(
         return CompletableFuture.completedFuture(url);
 
     }catch(Exception e){
+        e.printStackTrace();
 
         throw new RuntimeException(
-                "Image upload failed"
+                "Image upload failed "+e.getMessage(),e
         );
     }
 }

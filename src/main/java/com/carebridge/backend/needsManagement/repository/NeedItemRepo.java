@@ -1,14 +1,14 @@
 package com.carebridge.backend.needsManagement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+// import org.springframework.data.jpa.repository.Lock;
+// import org.springframework.data.jpa.repository.Query;
+// import org.springframework.data.repository.query.Param;
 
 import com.carebridge.backend.needsManagement.entity.NeedItem;
 import com.carebridge.backend.needsManagement.enums.CategoryType;
 
-import jakarta.persistence.LockModeType;
+// import jakarta.persistence.LockModeType;
 
 import java.util.List;
 // import java.util.List;

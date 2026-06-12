@@ -68,7 +68,7 @@ public class DonationService {
 
               NeedItem item =
                 needItemRepo
-                        .findByNeedItemIdForUpdate(
+                        .findByNeedItemId(
                                 request.getNeedItemId()
                         )
                         .orElseThrow(() ->

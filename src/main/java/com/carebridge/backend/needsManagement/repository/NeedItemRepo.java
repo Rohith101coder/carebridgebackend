@@ -23,17 +23,17 @@ public interface NeedItemRepo extends JpaRepository<NeedItem, Long>{
 
     // Optional<NeedItem> findByNeedItemId(String needItemId);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+//     @Lock(LockModeType.PESSIMISTIC_WRITE)
 
-@Query("""
-    SELECT n
-    FROM NeedItem n
-    WHERE n.needItemId = :needItemId
-""")
-Optional<NeedItem> findByNeedItemIdForUpdate(
-        @Param("needItemId")
-        String needItemId
-);
+// @Query("""
+//     SELECT n
+//     FROM NeedItem n
+//     WHERE n.needItemId = :needItemId
+// """)
+// Optional<NeedItem> findByNeedItemIdForUpdate(
+//         @Param("needItemId")
+//         String needItemId
+// );
 
     void deleteByNeedItemId(String id);
 

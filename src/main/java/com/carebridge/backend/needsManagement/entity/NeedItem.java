@@ -18,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NeedItem {
+
+    @Version
+    private Long version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -108,7 +108,7 @@ public class NeedItemService {
         OrphanageProfile profile = orphanageProfileRepository.findByUser(user).orElseThrow(()-> new OrphanageProfileNotFoundException("profile not found"));
 
 
-        NeedItem item = needItemRepo.findByNeedItemIdForUpdate(itemId).orElseThrow(() -> new ItemNotFound("No Such Item found"));
+        NeedItem item = needItemRepo.findByNeedItemId(itemId).orElseThrow(() -> new ItemNotFound("No Such Item found"));
 
         if(!item.getOrphanageCareBridgeId()
         .equals(profile.getCarebridgeId())){
@@ -196,7 +196,7 @@ public class NeedItemService {
         OrphanageProfile profile = orphanageProfileRepository.findByUser(user).orElseThrow(()-> new OrphanageProfileNotFoundException("profile not found"));
 
 
-        NeedItem item = needItemRepo.findByNeedItemIdForUpdate(itemId).orElseThrow(() -> new ItemNotFound("No Such Item found"));
+        NeedItem item = needItemRepo.findByNeedItemId(itemId).orElseThrow(() -> new ItemNotFound("No Such Item found"));
 
         if(!item.getOrphanageCareBridgeId()
         .equals(profile.getCarebridgeId())){

@@ -245,7 +245,7 @@ public DonationResponse updateDonation(
 
     NeedItem item =
             needItemRepo
-                    .findByNeedItemIdForUpdate(
+                    .findByNeedItemId(
                             donation.getNeedItemId()
                     )
                     .orElseThrow(() ->

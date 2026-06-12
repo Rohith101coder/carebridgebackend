@@ -2,7 +2,11 @@ package com.carebridge.backend.notificationManagement.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 // import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
 
 // import java.time.LocalDate;
 
@@ -10,6 +14,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 import com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus;
 
@@ -21,14 +26,120 @@ public class EmailService {
     
     private final JavaMailSender mailSender;
 
+         @Value("${brevo.api.key}")
+    private String apiKey;
+
+    private final RestClient restClient =
+            RestClient.builder()
+                    .baseUrl("https://api.brevo.com")
+                    .build();
+
+    private void sendEmail(
+            String toEmail,
+            String subject,
+            String htmlContent) {
+
+        Map<String, Object> payload = Map.of(
+                "sender", Map.of(
+                        "name", "CareBridge",
+                        "email", "carebridge086@gmail.com"
+                ),
+                "to", List.of(
+                        Map.of("email", toEmail)
+                ),
+                "subject", subject,
+                "htmlContent", htmlContent
+        );
+
+        restClient.post()
+                .uri("/v3/smtp/email")
+                .header("api-key", apiKey)
+                .body(payload)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+
     @Async    
     public void sendOtp(String toEmail, String otp){
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setSubject("CareBridge OTP Verification");
-        message.setText("Your OTP is: "+otp+ "\nValid for 5 minutes.");
+       sendEmail(
+    toEmail,
+    "CareBridge OTP Verification",
+    """
+    <div style="
+        max-width:600px;
+        margin:auto;
+        font-family:Arial,sans-serif;
+        background:#ffffff;
+        border:1px solid #e5e7eb;
+        border-radius:12px;
+        overflow:hidden;
+    ">
 
-        mailSender.send(message);
+        <div style="
+            background:#15803d;
+            padding:20px;
+            text-align:center;
+            color:white;
+        ">
+            <h1 style="margin:0;">CareBridge</h1>
+            <p style="margin:5px 0 0 0;">
+                Bridging Hearts, Building Futures
+            </p>
+        </div>
+
+        <div style="padding:30px;">
+
+            <h2 style="color:#111827;">
+                OTP Verification
+            </h2>
+
+            <p style="color:#4b5563;">
+                Thank you for using CareBridge.
+                Please use the OTP below to continue.
+            </p>
+
+            <div style="
+                text-align:center;
+                margin:30px 0;
+            ">
+                <span style="
+                    display:inline-block;
+                    background:#f0fdf4;
+                    border:2px solid #22c55e;
+                    color:#15803d;
+                    padding:18px 35px;
+                    border-radius:10px;
+                    font-size:32px;
+                    font-weight:bold;
+                    letter-spacing:8px;
+                ">
+                    %s
+                </span>
+            </div>
+
+            <p style="
+                color:#6b7280;
+                text-align:center;
+            ">
+                Valid for 5 minutes
+            </p>
+
+        </div>
+
+        <div style="
+            background:#f9fafb;
+            text-align:center;
+            padding:15px;
+            color:#6b7280;
+            font-size:12px;
+        ">
+            © 2026 CareBridge • Connecting Donors & Orphanages
+        </div>
+
+    </div>
+    """.formatted(otp)
+);
     }
 
         @Async

@@ -162,7 +162,7 @@ public class OrpSlotService {
 
         Slot slot =
                 slotRepo
-                        .findBySlotIdForUpdate(
+                        .findBySlotId(
                                 booking.getSlotId()
                         )
                         .orElseThrow(() ->
@@ -255,7 +255,7 @@ public class OrpSlotService {
 
         Slot slot =
                 slotRepo
-                        .findBySlotIdForUpdate(
+                        .findBySlotId(
                                 booking.getSlotId()
                         )
                         .orElseThrow(() ->

@@ -109,7 +109,7 @@ public VisitBookingResponse createVisitBooking(
                             ));
             Slot slot =
             slotRepo
-                    .findBySlotIdForUpdate(
+                    .findBySlotId(
                             request.getSlotId()
                     )
                     .orElseThrow(() ->

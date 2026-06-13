@@ -95,15 +95,19 @@ List<Slot> findByOrphanageCareBridgeIdAndSlotStatus(String orphanageCareBridgeId
 
 
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+//     @Lock(LockModeType.PESSIMISTIC_WRITE)
 
-@Query("""
-    SELECT s
-    FROM Slot s
-    WHERE s.slotId = :slotId
-""")
-Optional<Slot> findBySlotIdForUpdate(
-        @Param("slotId")
-        String slotId
-);
+// @Query("""
+//     SELECT s
+//     FROM Slot s
+//     WHERE s.slotId = :slotId
+// """)
+// Optional<Slot> findBySlotIdForUpdate(
+//         @Param("slotId")
+//         String slotId
+// );
+
+Optional<Slot>  findBySlotId(String slotId);
+
+
 }

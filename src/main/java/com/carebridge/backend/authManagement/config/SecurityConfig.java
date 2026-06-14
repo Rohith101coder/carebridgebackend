@@ -25,6 +25,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
         .csrf(csrf -> csrf.disable())
+        .cors(cors -> {})
         .authorizeHttpRequests(auth -> auth
         .requestMatchers(
                         "/swagger-ui/**",
@@ -32,6 +33,7 @@ public class SecurityConfig {
                         "/swagger-ui.html"
                         ).permitAll()
         .requestMatchers("/auth/**").permitAll()
+        .requestMatchers("/api/landing/**").permitAll()
         .requestMatchers("/donor/**").hasRole("DONOR")
         .requestMatchers("/orphanage/**").hasRole("ORPHANAGE")
         .requestMatchers("/admin/**").hasRole("ADMIN")

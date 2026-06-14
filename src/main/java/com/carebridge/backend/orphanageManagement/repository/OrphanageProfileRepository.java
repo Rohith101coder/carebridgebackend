@@ -1,6 +1,7 @@
 package com.carebridge.backend.orphanageManagement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 // import java.util.List;
@@ -23,4 +24,9 @@ public interface OrphanageProfileRepository extends JpaRepository<OrphanageProfi
     void deleteByCarebridgeId(String id);
 
     // Optional<OrphanageProfile> findByCareBridgeId(String id);
+
+    long countByVerificationStatus(VerificationStatus status);
+
+    @Query("SELECT COUNT(DISTINCT o.district) FROM OrphanageProfile o")
+long countDistinctDistricts();
 }

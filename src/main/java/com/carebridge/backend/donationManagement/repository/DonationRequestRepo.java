@@ -20,4 +20,6 @@ public interface DonationRequestRepo extends JpaRepository<DonationRequest, Long
     List<DonationRequest> findByOrphanageCareBridgeIdAndDonationStatus(String id, DonationStatus status);
 
     DonationRequest findByDonationRequestIdAndOrphanageCareBridgeId(String donationId, String orpId);
+
+    long countByDonationStatus(DonationStatus status);
 }

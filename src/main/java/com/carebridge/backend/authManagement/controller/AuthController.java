@@ -12,6 +12,7 @@ import com.carebridge.backend.authManagement.dto.AuthResponse;
 import com.carebridge.backend.authManagement.dto.LoginRequest;
 import com.carebridge.backend.authManagement.dto.LoginResponse;
 import com.carebridge.backend.authManagement.dto.RegisterRequest;
+import com.carebridge.backend.authManagement.dto.ResetPasswordRequest;
 // import com.carebridge.backend.authManagement.dto.VerifyAndRegisterRequest;
 import com.carebridge.backend.authManagement.service.AuthService;
 // import com.carebridge.backend.common.dto.ApiResponse;
@@ -42,4 +43,18 @@ public class AuthController {
         LoginResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/reset-password")
+public ResponseEntity<AuthResponse> resetPassword(
+        @RequestBody ResetPasswordRequest request) {
+
+    AuthResponse response =
+            authService.resetPassword(request);
+
+    return ResponseEntity.ok(response);
+}
+
+
+
+
 }

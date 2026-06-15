@@ -11,6 +11,7 @@ import com.carebridge.backend.authManagement.dto.AuthResponse;
 import com.carebridge.backend.authManagement.dto.VerifyAndRegisterRequest;
 import com.carebridge.backend.authManagement.service.AuthService;
 // import com.carebridge.backend.common.dto.ApiResponse;
+import com.carebridge.backend.notificationManagement.dto.VerifyForgotPasswordOtpRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,5 +32,21 @@ public class NotificationController {
         AuthResponse response = authService.resendOtp(email);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<AuthResponse> forgotPassword(@RequestParam String email){
+        AuthResponse response = authService.forgotPassword(email);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-forgot-otp")
+public ResponseEntity<AuthResponse> verifyForgotPasswordOtp(
+        @RequestBody VerifyForgotPasswordOtpRequest request) {
+
+    AuthResponse response =
+            authService.verifyForgotPasswordOtp(request);
+
+    return ResponseEntity.ok(response);
+}
 
 }

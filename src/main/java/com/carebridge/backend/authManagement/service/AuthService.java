@@ -9,6 +9,7 @@ import com.carebridge.backend.authManagement.dto.AuthResponse;
 import com.carebridge.backend.authManagement.dto.LoginRequest;
 import com.carebridge.backend.authManagement.dto.LoginResponse;
 import com.carebridge.backend.authManagement.dto.RegisterRequest;
+import com.carebridge.backend.authManagement.dto.ResetPasswordRequest;
 import com.carebridge.backend.authManagement.dto.VerifyAndRegisterRequest;
 import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.authManagement.exception.InvalidOTPException;
@@ -21,6 +22,7 @@ import com.carebridge.backend.authManagement.exception.UserAlreadyRegisteredExce
 import com.carebridge.backend.authManagement.exception.UserNotFoundException;
 import com.carebridge.backend.authManagement.repository.UserRepository;
 import com.carebridge.backend.authManagement.util.JwtUtil;
+import com.carebridge.backend.notificationManagement.dto.VerifyForgotPasswordOtpRequest;
 import com.carebridge.backend.notificationManagement.entity.Otp;
 import com.carebridge.backend.notificationManagement.repository.OtpRepository;
 import com.carebridge.backend.notificationManagement.service.EmailService;
@@ -130,5 +132,78 @@ public class AuthService {
 
             return new LoginResponse(token);
     }
+
+    public AuthResponse forgotPassword(String email) {
+
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() ->
+                new UserNotFoundException("User not found"));
+
+    String otpCode = OtpUtil.generateOtp();
+
+    Otp otp = otpRepository.findByEmail(email)
+            .orElse(new Otp());
+
+    otp.setEmail(email);
+    otp.setOtp(otpCode);
+    otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+    otp.setUsed(false);
+
+    otpRepository.save(otp);
+
+    emailService.sendOtp(email, otpCode);
+
+    return new AuthResponse("OTP sent successfully");
+}
+
+
+public AuthResponse verifyForgotPasswordOtp(
+        VerifyForgotPasswordOtpRequest request) {
+
+    Otp otp = otpRepository.findByEmail(request.getEmail())
+            .orElseThrow(() ->
+                    new OtpNotFoundException("OTP not found"));
+
+    if (otp.isUsed()) {
+        throw new OtpAlreadyUsedException("OTP already used");
+    }
+
+    if (otp.getExpiryTime().isBefore(LocalDateTime.now())) {
+        throw new OtpExpiredException("OTP expired");
+    }
+
+    if (!otp.getOtp().equals(request.getOtp())) {
+
+        otp.setAttempts(otp.getAttempts() + 1);
+        otpRepository.save(otp);
+
+        throw new InvalidOTPException("Invalid OTP");
+    }
+
+    otp.setUsed(true);
+    otpRepository.save(otp);
+
+    return new AuthResponse(
+            "OTP verified successfully");
+}
+
+public AuthResponse resetPassword(
+        ResetPasswordRequest request) {
+
+    User user = userRepository.findByEmail(
+            request.getEmail())
+            .orElseThrow(() ->
+                    new UserNotFoundException(
+                            "User not found"));
+
+    user.setPassword(
+            passwordEncoder.encode(
+                    request.getNewPassword()));
+
+    userRepository.save(user);
+
+    return new AuthResponse(
+            "Password reset successfully");
+}
     
 }

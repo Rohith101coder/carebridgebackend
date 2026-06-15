@@ -1,0 +1,111 @@
+Project: CareBridge Backend — Project Knowledge (for RAG chatbot)
+
+Overview:
+- Tech: Spring Boot (Java), REST controllers, JPA entities, multipart file uploads, JWT auth, email OTPs.
+- Purpose: Connect donors and orphanages; orphanages publish needs; donors create profiles, donate items or place online orders, and book visits; admins verify profiles.
+
+Roles:
+- DONOR: registers, creates donor profile, browses needs, donates, books visits.
+- ORPHANAGE: registers, creates orphanage profile (requires verification docs), posts need items, accepts deliveries, manages slots.
+- ADMIN: reviews & approves/rejects donor and orphanage profiles.
+
+Authentication & Registration:
+- Register: POST /auth/register (body: `name`, `email`, `password`, `role`) — generates OTP and emails it. Endpoint sends: AuthResponse "OTP sent successfully".
+- Verify & finalize registration: POST /auth/verify (handled by NotificationController -> AuthService.verifyOtp) (body: `email`, `otp`, `name`, `password`, `role`) — validates OTP, creates `User` (password hashed), sets email verified.
+- Resend OTP: POST /auth/resend?email={email}
+- Login: POST /auth/login (body: `email`, `password`) -> returns JWT token in LoginResponse.
+- OTP rules: OTP stored with expiry 5 minutes, attempts tracked; resend generates new OTP.
+
+Donor profile (flows & required fields):
+- Create profile endpoint: POST /donor/create-profile (consumes multipart/form-data) with `DonorProfileRequest` fields:
+  - Required in DTO: `name` (NotBlank), `designation` (NotBlank).
+  - DTO fields: `dob` (LocalDate), `houseNum`, `mandal`, `village`, `district`, `state`, `country`, `phone`, `profilePic` (MultipartFile), `panNumber` (pattern validation), `panPhoto` (MultipartFile).
+  - Persistent entity `DonorProfile` (DB) requires (non-null): `name`, `dateOfBirth`, `designation`, `careBridgeID` (generated), `phone` (unique), `panNumber` (unique), `panPhoto` (stored path/string). Practically, the backend will expect DOB, phone, PAN and panPhoto to persist. Provide these when creating profiles.
+- Update profile: PUT /donor/update-profile (multipart/form-data) with `DonorProfileUpdateRequest` (designation, address pieces, phone, profilePic, panPhoto) — fields optional.
+- Approval: when created, donor profile status = PENDING (VerificationStatus). Admin must approve via /admin/donor/approve/{id} or reject with reason via /admin/donor/reject/{id}.
+
+Orphanage profile (flows & required fields):
+- Create profile: POST /orphanage/create-profile (consumes multipart/form-data) with `OrphanageProfileRequest` fields:
+  - Required in DTO/entity: `orphanageName` (NotBlank), `admin`/`adminName` (NotBlank), `district`, `state`, `country`, `numberOfChildren` (NotNull), `orphanageEmail` (Email), `orphanagePhone` (NotBlank), `darpanId` (NotBlank), `panNumber` (NotBlank), `panPhoto` (MultipartFile, NotNull), `jjActCertificatePhoto` (MultipartFile, NotNull).
+  - Optional: `village`, `mandal`, `websiteLink`, `socialMediaLinks`, `orphanageProfilePic`, `adminProfilePic`.
+- Orphanage verification flow: after create, orphanage may need OTP verification endpoints: POST /orphanage/verifyOrpOTP (body `OTPVerifyAndOrpProfileAdd`) and POST /orphanage/resendOrpOTP (body `ResendOrpOTP`). Admin also reviews and approves/rejects via /admin/orphanage endpoints.
+
+Admin review flows:
+- Lists: GET /admin/donor/pending, /admin/donor/approved, /admin/donor/rejected; GET /admin/orphanage/pending, /admin/orphanage/approved, /admin/orphanage/rejected.
+- Approve donor: PATCH /admin/donor/approve/{id} -> sets donorStatus=VERIFIED and triggers email notification.
+- Reject donor: PATCH /admin/donor/reject/{id} with `EmailReason` -> sets donorStatus=REJECTED, moves to RejectedDonorProfile, deletes original, sends rejection email.
+- Approve/reject orphanage: PATCH /admin/orphanage/approve/{id}, PATCH /admin/orphanage/reject/{id} with reason (similar behavior, RejectedOrpProfile stored).
+
+Needs (orphange posts & donor discovers):
+- Create need item (orphanage): POST /orphanage/needItem/create-item with `NeedItemRequest` (name, category, quantity, pricePerQuantity, priority, productLinks etc.).
+- Update/delete: PUT /orphanage/needItem/updateItem/{id}, DELETE /orphanage/needItem/deleteItem/{id}.
+- Donor fetches active needs: GET /donor/allNeeds.
+- NeedItem entity fields: `name`, `description`, `category`, `quantity`, `fulfilledQuantity`, `reservedQuantity`, `pricePerQuantity`, `priority`, `orphanageCareBridgeId`, `productLinks`, `needItemId`.
+
+Donation flows (donor -> orphanage):
+- Donor donate endpoint: POST /donor/donate (consumes multipart/form-data) with `DonationRequestDTO` fields:
+  - `needItemId` (select which need), `quantity`, `donationType` (enum: IN_PERSON or ONLINE_ORDER).
+  - IN_PERSON: provide `expectedVisitDateTime` (LocalDateTime).
+  - ONLINE_ORDER: provide `expectedDeliveryDate` (LocalDate), optional `orderProofImage` (MultipartFile), `platformName`, `trackingId`, `orderPicString`.
+  - `message` (optional) for donor notes.
+- Donation persistence: `DonationRequest` requires `donationRequestId` (generated), `donorCareBridgeId`, `orphanageCareBridgeId`, `needItemId`, `quantity`, `donationType`, `donationStatus`.
+- Initial donation status: PENDING.
+- Donor views: GET /donor/pending-donations, GET /donor/completed-donations, GET /donor/cancelled-donations, GET /donor/delivered-donations.
+- Donor can update a donation: PATCH /donor/update/{donationId} (multipart/form-data) with `DonationUpdateRequest` to change quantity, donationType, visit date, delivery date, order proof, platform/tracking, message.
+- Donor can delete pending donation: DELETE /donor/delete-pending-donation/{id}.
+- Orphanage views: GET /orphanage/pending-donations, /orphanage/delivered-donations, /orphanage/cancelled-donations.
+- Orphanage accepts delivery: POST /orphanage/delivered/{id} (consumes multipart/form-data) with `ItemDeliveredDTO` (`note`, `deliveredPhoto`) — sets donation status to DELIVERED, records delivery photo and notes, triggers notifications.
+
+Donation statuses and lifecycle:
+- DonationStatus enum values used in code (typical): PENDING, DELIVERED, CANCELLED (and possibly COMPLETED depending on naming in code).
+- Transition examples in code:
+  - New donation -> PENDING
+  - Orphanage marks delivered -> DELIVERED (with photo/note)
+  - Donor or system can mark CANCELLED (if allowed)
+
+Visit booking (slots) flows:
+- Orphanage creates slots: POST /orphanage/slot/create (body SlotRequest) — slot fields include time/date, capacity, status (Slot entity uses SlotStatus: AVAILABLE, EXPIRED etc.).
+- Donor fetches available slots for an orphanage: GET /donor/slots/available-slots/{orphanageCareBridgeId} -> returns list of `DonorSlot` DTOs.
+- Donor books a slot: POST /donor/slots/book (body `VisitBookingRequest`): `slotId`, `numberOfVisitors`, `message` -> creates VisitBooking with bookingStatus = PENDING.
+- Orphanage reviews bookings: GET /orphanage/slot/pending -> returns list of VisitBooking entities.
+- Orphanage confirms: PATCH /orphanage/slot/confirm/{bookingId} -> sets VisitBookingStatus.CONFIRMED; rejects with PATCH /orphanage/slot/reject/{bookingId} and body `BookingRejectionRequest` { reason } -> sets status REJECTED and stores reason.
+- Slot lifecycle: slot statuses are updated by SlotSchedulerService (e.g., mark expired), and capacity/reservations managed in SlotService.
+
+Notifications & Email:
+- EmailService is used to send OTPs, approve/reject notifications, and donor/orphanage related emails.
+- OTP stored in DB (entity `Otp`) with expiry and used flag.
+
+Security & Tokens:
+- Login returns a JWT generated by `JwtUtil` and used in filtered requests; `JwtAuthFilter` enforces security on protected endpoints.
+
+File uploads & formats:
+- Multipart/form-data endpoints are used for profile creation, donation order proof, delivered photos; typical fields: MultipartFile for `profilePic`, `panPhoto`, `jjActCertificatePhoto`, `orderProofImage`, `deliveredPhoto`.
+- The backend stores file references (strings/URLs) in DB fields such as `panPhoto`, `profilePic`, `orderProofImageUrl`, `panPhoto`.
+
+Important IDs & identifiers:
+- `careBridgeID` / `carebridgeId`: unique identifier for donor & orphanage profiles (used across flows). Often generated by backend and used as foreign keys in DonationRequest and NeedItem.
+- `needItemId`: unique id for need items; donors select this to donate.
+- `donationRequestId`, `bookingId`, `slotId`: unique identifiers for donations, bookings, and slots.
+
+Summary: what to include in RAG knowledge base (recommended):
+- API endpoints (method + path) and brief purpose (controllers scanned above).
+- DTO field lists and validation hints (e.g., which fields are annotated NotBlank/NotNull or have pattern validation).
+- Required documents and which endpoints accept them:
+  - Donor: PAN number (format pattern), `panPhoto` (recommended/required by entity), `profilePic` (optional), DOB and phone (practically required by entity), proof files uploaded as MultipartFile.
+  - Orphanage: `panPhoto` (required), `jjActCertificatePhoto` (required), `darpanId` (required), `orphanageEmail`, `orphanagePhone` (unique), admin profile picture optional.
+  - Donation: `orderProofImage` (for online orders), `deliveredPhoto` (when orphanage marks delivered).
+- Lifecycle descriptions (registration OTP → verify → admin approval → donor/orphanage active), donation states, booking states.
+- Where to find code artifacts: controllers under `src/main/java/com/carebridge/backend/*/controller`, DTOs under `.../*/dto`, entities under `.../*/entity`.
+
+Quick developer notes & next steps for building RAG assistant:
+1) Index the project files (controllers, DTOs, entities, services) into your embeddings store so the assistant can answer API and data-model questions precisely.
+2) Add README-style high-level summaries for each module (donor, orphanage, donation, visit booking, admin, auth) — these help RAG retrieval.
+3) Include example requests/responses for key flows (register+verify, create donor/orphanage profile, donate, accept donation, book slot, confirm booking).
+4) Extract validation rules (OTP expiry 5 minutes, PAN regex, unique constraints) into the KB as short facts.
+
+File saved: PROJECT_KNOWLEDGE.txt (project root)
+
+If you want, I can:
+- generate example cURL / Postman snippets for each endpoint,
+- extract example request/response JSON for the most important flows,
+- or index these files into an embeddings database (we can pick vector DB and tooling).

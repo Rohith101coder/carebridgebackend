@@ -44,13 +44,13 @@ public interface NeedItemRepo extends JpaRepository<NeedItem, Long>{
 
     Optional<NeedItem>  findByNeedItemId(String needItemId);
 
-  @Query("""
+@Query("""
     SELECT n
     FROM NeedItem n
     WHERE (n.fulfilledQuantity + n.reservedQuantity) < n.quantity
     AND n.priority IN (
-        com.carebridge.backend.common.enums.PriorityLevel.HIGH,
-        com.carebridge.backend.common.enums.PriorityLevel.MEDIUM
+        com.carebridge.backend.needsManagement.enums.PriorityLevel.HIGH,
+        com.carebridge.backend.needsManagement.enums.PriorityLevel.MEDIUM
     )
 """)
 List<NeedItem> getUrgentNeeds(Pageable pageable);

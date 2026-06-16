@@ -4,6 +4,7 @@ package com.carebridge.backend.dashBoardManagement.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -69,7 +70,7 @@ public class DonorDashBoardService {
         donorStats.setOrphanageSupported(donorStatsService.orphanegeSupported(profile.getCareBridgeID()));
 
         //urgent needs
-        List<NeedItem> allUrgentNeeds = needItemRepo.getUrgentNeeds();
+        List<NeedItem> allUrgentNeeds = needItemRepo.getUrgentNeeds( PageRequest.of(0, 6));
         List<UrgentNeeds> urNeeds = new ArrayList<>();
         for(NeedItem urgentNeed : allUrgentNeeds){
             UrgentNeeds need = new UrgentNeeds();
@@ -84,7 +85,7 @@ public class DonorDashBoardService {
 
         //upcoming bookings
         List<UpcomingBookings> upcomingBookings = new ArrayList<>();
-        List<VisitBooking> visitsData = visitBookingRepo.getDonorUpcomingBookings(donorId);
+        List<VisitBooking> visitsData = visitBookingRepo.getDonorUpcomingBookings(donorId,PageRequest.of(0, 3));
         for(VisitBooking visitData : visitsData){
             UpcomingBookings upcomingBooking = new UpcomingBookings();
             upcomingBooking.setBookingDate(visitData.getCreatedAt().toString());

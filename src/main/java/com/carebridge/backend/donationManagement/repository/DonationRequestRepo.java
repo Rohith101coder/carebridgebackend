@@ -35,6 +35,14 @@ public interface DonationRequestRepo extends JpaRepository<DonationRequest, Long
 int getOrps(@Param("id") String id);
 
 
-    @Query("SELECT d.orphanageCareBridgeId FROM DonationRequest d WHERE d.donorCareBridgeId = :donorId")
-    List<String> getOrpNames(String donorId);
+    // @Query("SELECT d.orphanageCareBridgeId FROM DonationRequest d WHERE d.donorCareBridgeId = :donorId")
+    // List<String> getOrpNames(String donorId);
+
+    @Query("""
+    SELECT DISTINCT d.orphanageCareBridgeId
+    FROM DonationRequest d
+    WHERE d.donorCareBridgeId = :donorId
+""")
+List<String> getOrpNames(
+        @Param("donorId") String donorId);
 }

@@ -2,6 +2,7 @@ package com.carebridge.backend.orphanageManagement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 // import java.util.List;
@@ -30,9 +31,17 @@ public interface OrphanageProfileRepository extends JpaRepository<OrphanageProfi
     @Query("SELECT COUNT(DISTINCT o.district) FROM OrphanageProfile o")
 long countDistinctDistricts();
 
-    @Query("SELECT o.orphanageName FROM OrphangeProfile o WHERE o.carebridgeId = :id")
-    String getOrpName(String id);
+   @Query("""
+    SELECT o.orphanageName
+    FROM OrphanageProfile o
+    WHERE o.carebridgeId = :id
+""")
+String getOrpName(@Param("id") String id);
 
-    @Query("SELECT o.numberOfChildren FROM OrphangeProfile o WHERE o.carebridgeId = :id")
-    int getChildrenCount(String OrpId);
+   @Query("""
+    SELECT o.numberOfChildren
+    FROM OrphanageProfile o
+    WHERE o.carebridgeId = :id
+""")
+int getChildrenCount(@Param("id") String id);
 }

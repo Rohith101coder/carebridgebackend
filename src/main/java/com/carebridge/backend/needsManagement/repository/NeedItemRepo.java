@@ -1,10 +1,12 @@
 package com.carebridge.backend.needsManagement.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 // import org.springframework.data.jpa.repository.Lock;
 // import org.springframework.data.jpa.repository.Query;
 // import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.carebridge.backend.needsManagement.entity.NeedItem;
 import com.carebridge.backend.needsManagement.enums.CategoryType;
@@ -42,16 +44,21 @@ public interface NeedItemRepo extends JpaRepository<NeedItem, Long>{
 
     Optional<NeedItem>  findByNeedItemId(String needItemId);
 
-   @Query("""
+  @Query("""
     SELECT n
     FROM NeedItem n
     WHERE (n.fulfilledQuantity + n.reservedQuantity) < n.quantity
     AND n.priority IN (
         com.carebridge.backend.common.enums.PriorityLevel.HIGH,
         com.carebridge.backend.common.enums.PriorityLevel.MEDIUM
-    ) LIMIT 6 """)
-    List<NeedItem> getUrgentNeeds();
+    )
+""")
+List<NeedItem> getUrgentNeeds(Pageable pageable);
 
-    @Query("SELECT n.name FROM NeedItem WHERE n.needItemId = :id")
-    String getItemName(String id);
+   @Query("""
+    SELECT n.name
+    FROM NeedItem n
+    WHERE n.needItemId = :id
+""")
+String getItemName(@Param("id") String id);
 }

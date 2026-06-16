@@ -21,18 +21,9 @@ public interface VisitBookingRepo extends JpaRepository<VisitBooking, Long>{
 
     int countByDonorCareBridgeIdAndVisitBookingStatus(String id,VisitBookingStatus status);
 
- @Query("""
-    SELECT v
-    FROM VisitBooking v
-    WHERE v.donorCareBridgeId = :id
-    AND (
-        v.bookingStatus = com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus.PENDING
-        OR
-        v.bookingStatus = com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus.CONFIRMED
-    )
-    ORDER BY v.visitDate ASC
-""")
-List<VisitBooking> getDonorUpcomingBookings(
-        @Param("id") String id,
+List<VisitBooking>
+findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+        String donorId,
+        List<VisitBookingStatus> statuses,
         Pageable pageable);
 }

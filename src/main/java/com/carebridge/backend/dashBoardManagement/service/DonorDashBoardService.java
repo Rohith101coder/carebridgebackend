@@ -85,7 +85,15 @@ public class DonorDashBoardService {
 
         //upcoming bookings
         List<UpcomingBookings> upcomingBookings = new ArrayList<>();
-        List<VisitBooking> visitsData = visitBookingRepo.getDonorUpcomingBookings(donorId,PageRequest.of(0, 3));
+        List<VisitBooking> visitsData = visitBookingRepo
+    .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+        donorId,
+        List.of(
+            VisitBookingStatus.PENDING,
+            VisitBookingStatus.CONFIRMED
+        ),
+        PageRequest.of(0, 3)
+    );
         for(VisitBooking visitData : visitsData){
             UpcomingBookings upcomingBooking = new UpcomingBookings();
             upcomingBooking.setBookingDate(visitData.getCreatedAt().toString());

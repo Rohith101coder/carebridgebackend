@@ -21,13 +21,14 @@ public interface VisitBookingRepo extends JpaRepository<VisitBooking, Long>{
 
     int countByDonorCareBridgeIdAndVisitBookingStatus(String id,VisitBookingStatus status);
 
-  @Query("""
+ @Query("""
     SELECT v
     FROM VisitBooking v
     WHERE v.donorCareBridgeId = :id
-    AND v.bookingStatus IN (
-        com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus.PENDING,
-        com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus.CONFIRMED
+    AND (
+        v.bookingStatus = com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus.PENDING
+        OR
+        v.bookingStatus = com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus.CONFIRMED
     )
     ORDER BY v.visitDate ASC
 """)

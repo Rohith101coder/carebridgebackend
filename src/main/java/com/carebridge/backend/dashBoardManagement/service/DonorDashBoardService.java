@@ -122,7 +122,7 @@ public class DonorDashBoardService {
         DonorImpactSummary donorImpactSummary = new DonorImpactSummary();
         donorImpactSummary.setItemsDonated(donorStatsService.getTotalNeedsSupported());
         donorImpactSummary.setChildrenImpacted(donorImpactService.totalChildrenImpacted(donorId));
-        donorImpactSummary.setVisitsMade(visitBookingRepo.countByDonorCareBridgeIdAndVisitBookingStatus(donorId, VisitBookingStatus.COMPLETED));
+        donorImpactSummary.setVisitsMade(visitBookingRepo.countByDonorCareBridgeIdAndBookingStatus(donorId, VisitBookingStatus.COMPLETED));
 
         return new DonorDashBoard(donorData,donorStats,donorImpactSummary,recentDonations, upcomingBookings,urNeeds);
     }

@@ -19,7 +19,10 @@ public interface VisitBookingRepo extends JpaRepository<VisitBooking, Long>{
 
     Optional<VisitBooking> findByBookingIdAndOrphanageCareBridgeId(String bookId, String orpId);
 
-    int countByDonorCareBridgeIdAndVisitBookingStatus(String id,VisitBookingStatus status);
+    int countByDonorCareBridgeIdAndBookingStatus(
+        String id,
+        VisitBookingStatus status
+);
 
 List<VisitBooking>
 findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(

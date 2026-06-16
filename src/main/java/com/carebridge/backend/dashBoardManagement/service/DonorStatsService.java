@@ -43,9 +43,9 @@ public class DonorStatsService {
     }
 
     public int totalVisitsBooked(String careId){
-        return visitBookingRepo.countByDonorCareBridgeIdAndVisitBookingStatus(careId, VisitBookingStatus.COMPLETED )
-        +visitBookingRepo.countByDonorCareBridgeIdAndVisitBookingStatus(careId, VisitBookingStatus.CONFIRMED)
-        +visitBookingRepo.countByDonorCareBridgeIdAndVisitBookingStatus(careId, VisitBookingStatus.PENDING)
+        return visitBookingRepo.countByDonorCareBridgeIdAndBookingStatus(careId, VisitBookingStatus.COMPLETED )
+        +visitBookingRepo.countByDonorCareBridgeIdAndBookingStatus(careId, VisitBookingStatus.CONFIRMED)
+        +visitBookingRepo.countByDonorCareBridgeIdAndBookingStatus(careId, VisitBookingStatus.PENDING)
         ;
     }
 

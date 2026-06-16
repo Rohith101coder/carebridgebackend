@@ -33,7 +33,8 @@ public CorsConfigurationSource corsConfigurationSource() {
 
     configuration.setAllowedOrigins(List.of(
             "http://localhost:5173",
-            "https://carebridge-22a92.web.app"
+            "https://carebridge-22a92.web.app",
+            "https://rmm3t6k1-5173.inc1.devtunnels.ms/"
     ));
 
     configuration.setAllowedMethods(List.of("*"));

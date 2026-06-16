@@ -29,4 +29,10 @@ public interface OrphanageProfileRepository extends JpaRepository<OrphanageProfi
 
     @Query("SELECT COUNT(DISTINCT o.district) FROM OrphanageProfile o")
 long countDistinctDistricts();
+
+    @Query("SELECT o.orphanageName FROM OrphangeProfile o WHERE o.carebridgeId = :id")
+    String getOrpName(String id);
+
+    @Query("SELECT o.numberOfChildren FROM OrphangeProfile o WHERE o.carebridgeId = :id")
+    int getChildrenCount(String OrpId);
 }

@@ -1,6 +1,7 @@
 package com.carebridge.backend.visitbookingManagement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.carebridge.backend.visitbookingManagement.entity.VisitBooking;
 import com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus;
@@ -15,4 +16,12 @@ public interface VisitBookingRepo extends JpaRepository<VisitBooking, Long>{
     List<VisitBooking> findByOrphanageCareBridgeIdAndBookingStatus(String orphanageCareBridgeId, VisitBookingStatus visitBookingStatus);
 
     Optional<VisitBooking> findByBookingIdAndOrphanageCareBridgeId(String bookId, String orpId);
+
+    int countByDonorCareBridgeIdAndVisitBookingStatus(String id,VisitBookingStatus status);
+
+    @Query("""
+        SELECT v FROM visitBooking v WHERE v.donorCareBridgeId = :id AND v.bookingStatus IN(
+    com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus.PENDING,
+    com.carebridge.backend.visitbookingManagement.enums.VisitBookingStatus.CONFIRMED) LIMIT 3 """)
+    List<VisitBooking> getDonorUpcomingBookings(String id);
 }

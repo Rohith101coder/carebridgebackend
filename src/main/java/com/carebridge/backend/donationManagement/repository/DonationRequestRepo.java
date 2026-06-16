@@ -1,6 +1,8 @@
 package com.carebridge.backend.donationManagement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.carebridge.backend.donationManagement.entity.DonationRequest;
 import com.carebridge.backend.donationManagement.enums.DonationStatus;
@@ -22,4 +24,17 @@ public interface DonationRequestRepo extends JpaRepository<DonationRequest, Long
     DonationRequest findByDonationRequestIdAndOrphanageCareBridgeId(String donationId, String orpId);
 
     long countByDonationStatus(DonationStatus status);
+
+    int countByDonorCareBridgeIdAndDonationStatus(String donorCareBridgeId, DonationStatus donationStatus);
+
+   @Query("""
+    SELECT COUNT(DISTINCT d.orphanageCareBridgeId)
+    FROM DonationRequest d
+    WHERE d.donorCareBridgeId = :id
+""")
+int getOrps(@Param("id") String id);
+
+
+    @Query("SELECT d.orphanageCareBridgeId FROM DonationRequest d WHERE d.donorCareBridgeId = :donorId")
+    List<String> getOrpNames(String donorId);
 }

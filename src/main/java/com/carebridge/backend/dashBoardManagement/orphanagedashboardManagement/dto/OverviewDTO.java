@@ -8,6 +8,13 @@ import lombok.*;
 @AllArgsConstructor
 public class OverviewDTO {
 
+
+     private String orphanageName;
+
+    private String adminName;
+
+    private String careBridgeId;
+
     private Integer childrenCount;
 
     private Integer activeNeedsCount;

@@ -146,6 +146,9 @@ private OverviewDTO buildOverview(String orphanageCareBridgeId) {
                     .count();
 
     return OverviewDTO.builder()
+             .orphanageName(orphanage.getOrphanageName())
+             .adminName(orphanage.getAdminName())
+             .careBridgeId(orphanage.getCarebridgeId())
             .childrenCount(orphanage.getNumberOfChildren())
             .activeNeedsCount(activeNeedsCount)
             .totalDonationsAmount(totalDonationAmount)

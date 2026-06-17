@@ -1,4 +1,4 @@
-package com.carebridge.backend.dashBoardManagement.dto;
+package com.carebridge.backend.dashBoardManagement.donordashboardManagement.dto;
 
 import lombok.Data;
 

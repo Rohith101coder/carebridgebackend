@@ -1,4 +1,4 @@
-package com.carebridge.backend.dashBoardManagement.service;
+package com.carebridge.backend.dashBoardManagement.donordashboardManagement.service;
 
 import java.util.List;
 

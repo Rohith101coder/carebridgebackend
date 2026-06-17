@@ -22,6 +22,8 @@ public interface OrphanageProfileRepository extends JpaRepository<OrphanageProfi
 
     Optional<OrphanageProfile>  findByCarebridgeId(String carebridgeId);
 
+    // Optional<OrphanageProfile> findByCarebridgeId(String carebridgeId);
+
     void deleteByCarebridgeId(String id);
 
     // Optional<OrphanageProfile> findByCareBridgeId(String id);

@@ -61,4 +61,25 @@ List<NeedItem> getUrgentNeeds(Pageable pageable);
     WHERE n.needItemId = :id
 """)
 String getItemName(@Param("id") String id);
+
+
+long countByOrphanageCareBridgeIdAndQuantityGreaterThan(
+        String orphanageCareBridgeId,
+        Integer fulfilledQuantity
+);
+
+
+List<NeedItem> findTop5ByOrphanageCareBridgeIdOrderByPriorityAscCreatedAtDesc(
+        String orphanageCareBridgeId
+);
+
+List<NeedItem> findByOrphanageCareBridgeId(String id);
+
+
+
+
+
+
+
+
 }

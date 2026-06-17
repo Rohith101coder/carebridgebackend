@@ -109,5 +109,6 @@ List<Slot> findByOrphanageCareBridgeIdAndSlotStatus(String orphanageCareBridgeId
 
 Optional<Slot>  findBySlotId(String slotId);
 
+// Optional<Slot> findBySlotId(String slotId);
 
 }

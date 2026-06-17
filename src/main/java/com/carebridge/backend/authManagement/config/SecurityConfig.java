@@ -61,6 +61,7 @@ public CorsConfigurationSource corsConfigurationSource() {
                         ).permitAll()
         .requestMatchers("/auth/**").permitAll()
         .requestMatchers("/api/landing/**").permitAll()
+        .requestMatchers("/api/**").permitAll()
         .requestMatchers("/donor/**").hasRole("DONOR")
         .requestMatchers("/orphanage/**").hasRole("ORPHANAGE")
         .requestMatchers("/admin/**").hasRole("ADMIN")

@@ -18,4 +18,7 @@ public interface DonorProfileRepository extends JpaRepository<DonorProfile, Long
     Optional<DonorProfile> findByCareBridgeID(String careBridgeID);
 
     void deleteByCareBridgeID(String id);
+
+
+    // Optional<DonorProfile> findByCareBridgeID(String careBridgeID);
 }

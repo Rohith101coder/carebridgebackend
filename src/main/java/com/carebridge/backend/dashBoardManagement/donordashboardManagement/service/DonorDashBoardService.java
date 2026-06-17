@@ -1,4 +1,4 @@
-package com.carebridge.backend.dashBoardManagement.service;
+package com.carebridge.backend.dashBoardManagement.donordashboardManagement.service;
 
 // import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,19 +12,21 @@ import org.springframework.stereotype.Service;
 import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.authManagement.exception.UserNotFoundException;
 import com.carebridge.backend.authManagement.repository.UserRepository;
-import com.carebridge.backend.dashBoardManagement.dto.DonorDashBoard;
-import com.carebridge.backend.dashBoardManagement.dto.DonorData;
-import com.carebridge.backend.dashBoardManagement.dto.DonorImpactSummary;
-import com.carebridge.backend.dashBoardManagement.dto.DonorStats;
-import com.carebridge.backend.dashBoardManagement.dto.RecentDonations;
-import com.carebridge.backend.dashBoardManagement.dto.UpcomingBookings;
-import com.carebridge.backend.dashBoardManagement.dto.UrgentNeeds;
+import com.carebridge.backend.common.enums.VerificationStatus;
+import com.carebridge.backend.dashBoardManagement.donordashboardManagement.dto.DonorDashBoard;
+import com.carebridge.backend.dashBoardManagement.donordashboardManagement.dto.DonorData;
+import com.carebridge.backend.dashBoardManagement.donordashboardManagement.dto.DonorImpactSummary;
+import com.carebridge.backend.dashBoardManagement.donordashboardManagement.dto.DonorStats;
+import com.carebridge.backend.dashBoardManagement.donordashboardManagement.dto.RecentDonations;
+import com.carebridge.backend.dashBoardManagement.donordashboardManagement.dto.UpcomingBookings;
+import com.carebridge.backend.dashBoardManagement.donordashboardManagement.dto.UrgentNeeds;
 import com.carebridge.backend.donationManagement.entity.DonationRequest;
 import com.carebridge.backend.donationManagement.enums.DonationStatus;
 import com.carebridge.backend.donationManagement.repository.DonationRequestRepo;
 import com.carebridge.backend.donorManagement.entity.DonorProfile;
 import com.carebridge.backend.donorManagement.repository.DonorProfileRepository;
 import com.carebridge.backend.needsManagement.entity.NeedItem;
+import com.carebridge.backend.needsManagement.exception.CommonException;
 import com.carebridge.backend.needsManagement.repository.NeedItemRepo;
 import com.carebridge.backend.orphanageManagement.exception.OrphanageProfileNotFoundException;
 import com.carebridge.backend.orphanageManagement.repository.OrphanageProfileRepository;
@@ -53,6 +55,9 @@ public class DonorDashBoardService {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("user not present"));
         DonorProfile profile = donorProfileRepository.findByUser(user).orElseThrow(()-> new OrphanageProfileNotFoundException("profile not found"));
+        if(profile.getDonorStatus() != VerificationStatus.VERIFIED){
+            throw new CommonException("profile not activated yet");
+        }
         String donorId = profile.getCareBridgeID();
 
         //donor data

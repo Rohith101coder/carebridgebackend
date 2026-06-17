@@ -1,4 +1,4 @@
-package com.carebridge.backend.dashBoardManagement.dto;
+package com.carebridge.backend.dashBoardManagement.donordashboardManagement.dto;
 
 import com.carebridge.backend.needsManagement.enums.CategoryType;
 

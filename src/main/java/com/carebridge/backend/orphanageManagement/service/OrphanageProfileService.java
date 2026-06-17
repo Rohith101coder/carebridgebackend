@@ -22,6 +22,7 @@ import com.carebridge.backend.authManagement.exception.OtpNotFoundException;
 import com.carebridge.backend.authManagement.repository.UserRepository;
 import com.carebridge.backend.common.enums.VerificationStatus;
 import com.carebridge.backend.common.service.ImageUploadService;
+import com.carebridge.backend.needsManagement.exception.CommonException;
 // import com.carebridge.backend.donorManagement.exception.FileIssueException;
 import com.carebridge.backend.notificationManagement.entity.Otp;
 import com.carebridge.backend.notificationManagement.repository.OtpRepository;
@@ -30,6 +31,7 @@ import com.carebridge.backend.notificationManagement.util.OtpUtil;
 import com.carebridge.backend.orphanageManagement.dto.OTPVerifyAndOrpProfileAdd;
 import com.carebridge.backend.orphanageManagement.dto.OrpProfileResponse;
 import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileRequest;
+import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileResponse;
 import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileUpdateRequest;
 import com.carebridge.backend.orphanageManagement.dto.ResendOrpOTP;
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
@@ -365,5 +367,58 @@ if(adminPicFuture != null){
 
 
         return new OrpProfileResponse("Orphanage profile updated successfully");
+    }
+
+
+ public OrphanageProfileResponse getOrphanageProfile() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new CommonException("User not found"));
+
+        OrphanageProfile profile =
+                orphanageProfileRepository.findByUser(user)
+                        .orElseThrow(() ->
+                                new CommonException("Orphanage profile not found"));
+        if(profile.getVerificationStatus() != VerificationStatus.VERIFIED){
+            throw new CommonException("profile not verified");
+        }
+
+        return mapToResponse(profile);
+    }
+
+     private OrphanageProfileResponse mapToResponse(
+            OrphanageProfile profile) {
+
+        return OrphanageProfileResponse.builder()
+                .carebridgeId(profile.getCarebridgeId())
+                .orphanageName(profile.getOrphanageName())
+                .adminName(profile.getAdminName())
+                .village(profile.getVillage())
+                .mandal(profile.getMandal())
+                .district(profile.getDistrict())
+                .state(profile.getState())
+                .country(profile.getCountry())
+                .numberOfChildren(profile.getNumberOfChildren())
+                .orphanageEmail(profile.getOrphanageEmail())
+                .orphanageEmailVerified(profile.isOrphanageEmailVerified())
+                .orphanagePhone(profile.getOrphanagePhone())
+                .websiteLink(profile.getWebsiteLink())
+                .socialMediaLinks(profile.getSocialMediaLinks())
+                .darpanId(profile.getDarpanId())
+                .panNumber(profile.getPanNumber())
+                .panPhoto(profile.getPanPhoto())
+                .jjActCertificatePhoto(profile.getJjActCertificatePhoto())
+                .orphanageProfilePic(profile.getOrphanageProfilePic())
+                .adminProfilePic(profile.getAdminProfilePic())
+                .verificationStatus(profile.getVerificationStatus())
+                .createdAt(profile.getCreatedAt())
+                .updateAt(profile.getUpdateAt())
+                .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.carebridge.backend.orphanageManagement.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.carebridge.backend.orphanageManagement.dto.OTPVerifyAndOrpProfileAdd;
 import com.carebridge.backend.orphanageManagement.dto.OrpProfileResponse;
 import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileRequest;
+import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileResponse;
 import com.carebridge.backend.orphanageManagement.dto.OrphanageProfileUpdateRequest;
 import com.carebridge.backend.orphanageManagement.dto.ResendOrpOTP;
 
@@ -67,4 +69,14 @@ public class OrphanageProfileController {
 
     return ResponseEntity.ok(response);
     }
+
+
+    @GetMapping("/profile")
+public ResponseEntity<OrphanageProfileResponse> getProfile() {
+
+    return ResponseEntity.ok(
+            orphanageProfileService.getOrphanageProfile()
+    );
+}
+    
 }

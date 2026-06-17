@@ -36,7 +36,7 @@ public class OrphanageProfileRequest {
     @NotNull
     private Integer numberOfChildren;
 
-    @Email
+    @Email 
     private String orphanageEmail;
 
     @NotBlank

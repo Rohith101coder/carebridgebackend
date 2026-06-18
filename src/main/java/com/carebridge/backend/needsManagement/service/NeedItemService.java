@@ -1,6 +1,7 @@
 package com.carebridge.backend.needsManagement.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,8 @@ import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.authManagement.repository.UserRepository;
 // import com.carebridge.backend.authManagement.service.AuthService;
 import com.carebridge.backend.common.enums.VerificationStatus;
+import com.carebridge.backend.donationManagement.enums.DonationStatus;
+import com.carebridge.backend.donationManagement.repository.DonationRequestRepo;
 import com.carebridge.backend.donorManagement.exception.UserNotFoundException;
 import com.carebridge.backend.needsManagement.dto.NeedItemRequest;
 import com.carebridge.backend.needsManagement.dto.NeedItemResponse;
@@ -42,6 +45,8 @@ public class NeedItemService {
 
     private final OrphanageProfileRepository orphanageProfileRepository;
     // private final NeedItemIdGenerator needItemIdGenerator;
+
+    private final DonationRequestRepo donationRequestRepo;
 
     @Transactional
     public NeedItemResponse createNeedItem(NeedItemRequest request){
@@ -257,6 +262,36 @@ public class NeedItemService {
 
             .toList();
 }
+
+
+        public List<NeedItem> getAllDeliveredItems(){
+
+                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                 String email = authentication.getName();
+                User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("user not present"));
+                OrphanageProfile profile = orphanageProfileRepository.findByUser(user).orElseThrow(()-> new OrphanageProfileNotFoundException("profile not found"));
+
+                if(profile.getVerificationStatus()
+                != VerificationStatus.VERIFIED){
+
+                throw new OrpNotVerified(
+            "Only verified orphanages can create need items"
+                );
+                        }
+
+
+                String carebridgeId = profile.getCarebridgeId();
+
+                List<String> needItemIds = donationRequestRepo.findNeedItemIdsByOrphanageAndStatus(carebridgeId, DonationStatus.DELIVERED);
+                List<NeedItem> needItems = new ArrayList<>();
+                for(String needItemId : needItemIds){
+                        NeedItem item = needItemRepo.findByNeedItemId(needItemId).orElseThrow(()-> new CommonException("item not found"));
+                        needItems.add(item);
+                }
+
+                
+                return  needItems;
+        } 
 }
 
 

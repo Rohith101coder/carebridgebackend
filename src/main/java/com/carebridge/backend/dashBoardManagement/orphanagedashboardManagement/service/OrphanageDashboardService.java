@@ -37,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrphanageDashboardService {
 
-    private final OrphanageProfileRepository orphanageProfileRepository;
+private final OrphanageProfileRepository orphanageProfileRepository;
 
 private final NeedItemRepo needItemRepository;
 

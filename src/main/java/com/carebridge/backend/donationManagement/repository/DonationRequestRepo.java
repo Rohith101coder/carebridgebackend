@@ -45,4 +45,17 @@ int getOrps(@Param("id") String id);
 """)
 List<String> getOrpNames(
         @Param("donorId") String donorId);
+
+
+
+   @Query("""
+    SELECT d.needItemId
+    FROM DonationRequest d
+    WHERE d.orphanageCareBridgeId = :orphanageId
+      AND d.donationStatus = :status
+""")
+List<String> findNeedItemIdsByOrphanageAndStatus(
+        @Param("orphanageId") String orphanageId,
+        @Param("status") DonationStatus status
+);
 }

@@ -62,4 +62,12 @@ public class NeedItemController {
         List<NeedItem> items = needItemService.getAllActiveNeeds();
         return ResponseEntity.ok(items);
     }
+
+    @GetMapping("/deliveredItems")
+    public ResponseEntity<List<NeedItem>> getAllDeliveredItems(){
+        List<NeedItem> items = needItemService.getAllDeliveredItems();
+        return ResponseEntity.ok(items);
+    }
+
+
 }

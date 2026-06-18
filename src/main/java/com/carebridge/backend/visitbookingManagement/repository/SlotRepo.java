@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
+// import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.carebridge.backend.visitbookingManagement.entity.Slot;
 import com.carebridge.backend.visitbookingManagement.enums.SlotStatus;
 
-import jakarta.persistence.LockModeType;
+// import jakarta.persistence.LockModeType;
 
 public interface SlotRepo extends JpaRepository<Slot, Long>{
    

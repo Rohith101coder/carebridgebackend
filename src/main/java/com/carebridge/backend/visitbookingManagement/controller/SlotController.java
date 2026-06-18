@@ -30,19 +30,10 @@ public class SlotController {
     private final SlotService slotService;
     private final OrpSlotService orpSlotService;
 
-  
-
     @PostMapping("/create")
-    public ResponseEntity<SlotResponse> createSlot(
-
-            
-            @RequestBody
-            SlotRequest request
-    ){
-
+    public ResponseEntity<SlotResponse> createSlot(@RequestBody SlotRequest request){
         SlotResponse response =
                 slotService.createSlot(request);
-
         return ResponseEntity.ok(response);
     }
 
@@ -89,11 +80,5 @@ public class SlotController {
 
         return ResponseEntity.ok(response);
     }
-
-
-
-
-
-
 
 }

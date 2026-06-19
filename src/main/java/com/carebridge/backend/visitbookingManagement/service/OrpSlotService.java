@@ -21,6 +21,7 @@ import com.carebridge.backend.notificationManagement.service.EmailService;
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 import com.carebridge.backend.orphanageManagement.exception.OrphanageProfileNotFoundException;
 import com.carebridge.backend.orphanageManagement.repository.OrphanageProfileRepository;
+import com.carebridge.backend.visitbookingManagement.dto.ApprovedVisitResponse;
 import com.carebridge.backend.visitbookingManagement.dto.BookingRejectionRequest;
 import com.carebridge.backend.visitbookingManagement.dto.SlotResponse;
 import com.carebridge.backend.visitbookingManagement.dto.VisitBookingResponse;
@@ -396,46 +397,125 @@ public class OrpSlotService {
     }
 
 
-    public List<VisitBooking> getAllApprovedSlots(){
-         Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
+public List<ApprovedVisitResponse> getAllApprovedSlots() {
 
-        String email = authentication.getName();
+    Authentication authentication =
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
 
-        User user =
-                userRepository
-                        .findByEmail(email)
-                        .orElseThrow(() ->
-                                new UserNotFoundException(
-                                        "User not found"
-                                ));
+    String email = authentication.getName();
 
-        OrphanageProfile orphanage =
-                orphanageProfileRepository
-                        .findByUser(user)
-                        .orElseThrow(() ->
-                                new OrphanageProfileNotFoundException(
-                                        "Orphanage not found"
-                                ));
-        if(orphanage.getVerificationStatus() != VerificationStatus.VERIFIED){
-                throw new CommonException("Orp Profile not yet verified");
-        }
+    User user =
+            userRepository
+                    .findByEmail(email)
+                    .orElseThrow(() ->
+                            new UserNotFoundException(
+                                    "User not found"
+                            ));
 
-        List<VisitBooking> approvedVisits1 = visitBookingRepo.findByOrphanageCareBridgeIdAndBookingStatus(orphanage.getCarebridgeId(),VisitBookingStatus.CONFIRMED);
-         List<VisitBooking> approvedVisits2 = visitBookingRepo.findByOrphanageCareBridgeIdAndBookingStatus(orphanage.getCarebridgeId(),VisitBookingStatus.COMPLETED);
-          List<VisitBooking> approvedVisits3 = visitBookingRepo.findByOrphanageCareBridgeIdAndBookingStatus(orphanage.getCarebridgeId(),VisitBookingStatus.NOT_VISITED);
+    OrphanageProfile orphanage =
+            orphanageProfileRepository
+                    .findByUser(user)
+                    .orElseThrow(() ->
+                            new OrphanageProfileNotFoundException(
+                                    "Orphanage not found"
+                            ));
 
-          List<VisitBooking> combined = new ArrayList<>();
-          combined.addAll(approvedVisits1);
-          combined.addAll(approvedVisits2);
-          combined.addAll(approvedVisits3);
-
-
-
-        return combined;
+    if (orphanage.getVerificationStatus() != VerificationStatus.VERIFIED) {
+        throw new CommonException("Orphanage Profile not yet verified");
     }
+
+    List<VisitBooking> confirmed =
+            visitBookingRepo.findByOrphanageCareBridgeIdAndBookingStatus(
+                    orphanage.getCarebridgeId(),
+                    VisitBookingStatus.CONFIRMED
+            );
+
+    List<VisitBooking> completed =
+            visitBookingRepo.findByOrphanageCareBridgeIdAndBookingStatus(
+                    orphanage.getCarebridgeId(),
+                    VisitBookingStatus.COMPLETED
+            );
+
+    List<VisitBooking> notVisited =
+            visitBookingRepo.findByOrphanageCareBridgeIdAndBookingStatus(
+                    orphanage.getCarebridgeId(),
+                    VisitBookingStatus.NOT_VISITED
+            );
+
+    List<VisitBooking> bookings = new ArrayList<>();
+
+    bookings.addAll(confirmed);
+    bookings.addAll(completed);
+    bookings.addAll(notVisited);
+
+    return bookings.stream()
+            .map(booking -> {
+
+                // TODO: replace with your actual repository method
+                Slot slot = slotRepo
+                        .findBySlotId(booking.getSlotId())
+                        .orElseThrow(() ->
+                                new CommonException(
+                                        "Slot not found : "
+                                                + booking.getSlotId()
+                                ));
+
+                ApprovedVisitResponse response =
+                        new ApprovedVisitResponse();
+
+                response.setBookingId(
+                        booking.getBookingId()
+                );
+
+                response.setSlotId(
+                        booking.getSlotId()
+                );
+
+                response.setDonorCareBridgeId(
+                        booking.getDonorCareBridgeId()
+                );
+
+
+                response.setNumberOfVisitors(
+                        booking.getNumberOfVisitors()
+                );
+
+                response.setMessage(
+                        booking.getMessage()
+                );
+
+                response.setBookingStatus(
+                        booking.getBookingStatus()
+                );
+
+                response.setCreatedAt(
+                        booking.getCreatedAt()
+                );
+
+                response.setUpdatedAt(
+                        booking.getUpdatedAt()
+                );
+
+                // Slot details
+                response.setSlotDate(
+                        slot.getDate()
+                );
+
+                response.setStartTime(
+                        slot.getStartTime()
+                );
+
+                response.setEndTime(
+                        slot.getEndTime()
+                );
+
+
+                return response;
+            })
+            .toList();
+}
 
 
     public SlotResponse markAsCompleted(String id){

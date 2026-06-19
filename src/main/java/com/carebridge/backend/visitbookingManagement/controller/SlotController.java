@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.carebridge.backend.visitbookingManagement.dto.ApprovedVisitResponse;
 import com.carebridge.backend.visitbookingManagement.dto.BookingRejectionRequest;
 import com.carebridge.backend.visitbookingManagement.dto.SlotRequest;
 import com.carebridge.backend.visitbookingManagement.dto.SlotResponse;
@@ -99,9 +100,9 @@ public class SlotController {
 
 
 @GetMapping("/approvals")
-    public ResponseEntity<List<VisitBooking>> getAllApprovedVisits(){
+    public ResponseEntity<List<ApprovedVisitResponse>> getAllApprovedVisits(){
 
-        List<VisitBooking> approvals = orpSlotService.getAllApprovedSlots();
+        List<ApprovedVisitResponse> approvals = orpSlotService.getAllApprovedSlots();
 
         return ResponseEntity.ok(approvals);
     }

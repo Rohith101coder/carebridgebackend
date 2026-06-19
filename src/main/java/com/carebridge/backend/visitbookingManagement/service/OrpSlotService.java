@@ -363,6 +363,7 @@ public class OrpSlotService {
         return futureSlots;
     }
 
+    @Transactional
     public SlotResponse deleteSlot(String id){
           Authentication authentication =
                 SecurityContextHolder

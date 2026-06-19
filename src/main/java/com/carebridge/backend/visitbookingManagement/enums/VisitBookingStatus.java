@@ -9,5 +9,7 @@ public enum VisitBookingStatus {
 
     COMPLETED,
 
-    REJECTED
+    REJECTED,
+
+    NOT_VISITED
 }

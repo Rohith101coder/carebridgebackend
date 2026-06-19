@@ -97,4 +97,26 @@ public class SlotController {
         return ResponseEntity.ok(response);
     }
 
+
+@GetMapping("/approvals")
+    public ResponseEntity<List<VisitBooking>> getAllApprovedVisits(){
+
+        List<VisitBooking> approvals = orpSlotService.getAllApprovedSlots();
+
+        return ResponseEntity.ok(approvals);
+    }
+
+    @PatchMapping("/completed/{id}")
+    public ResponseEntity<SlotResponse> markAsCompleted(@PathVariable String id){
+        SlotResponse response = orpSlotService.markAsCompleted(id);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/notVisited/{id}")
+    public ResponseEntity<SlotResponse> markAsNotVisited(@PathVariable String id){
+        SlotResponse response = orpSlotService.markAsNotVisited(id);
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -1957,5 +1957,83 @@ public static String bookingConfirmedTemplate(
     );
 }
 
+public static String visitCompletedTemplate(
+        String donorName,
+        String status,
+        String bookingId,
+        String visitDate,
+        String orphanageName
+){
+
+    return """
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
+        
+            <h2 style="color:#2E8B57;">
+                Visit Status Update
+            </h2>
+
+            <p>Dear %s,</p>
+
+            <p>
+                We are pleased to inform you that your visit booking has been
+                <strong>%s</strong>.
+            </p>
+
+            <table style="border-collapse: collapse;">
+                <tr>
+                    <td><strong>Booking ID:</strong></td>
+                    <td>%s</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Visit Date:</strong></td>
+                    <td>%s</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Orphanage:</strong></td>
+                    <td>%s</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Status:</strong></td>
+                    <td>%s</td>
+                </tr>
+            </table>
+
+            <br>
+
+            <p>
+                Thank you for taking the time to visit and support the children.
+                Your contribution and presence help create a positive impact in
+                their lives.
+            </p>
+
+            <p>
+                We appreciate your support and look forward to your continued
+                association with CareBridge.
+            </p>
+
+            <br>
+
+            <p>
+                Regards,<br>
+                <strong>CareBridge Team</strong>
+            </p>
+
+        </body>
+        </html>
+        """
+        .formatted(
+                donorName,
+                status,
+                bookingId,
+                visitDate,
+                orphanageName,
+                status
+        );
+}
+
 }
 

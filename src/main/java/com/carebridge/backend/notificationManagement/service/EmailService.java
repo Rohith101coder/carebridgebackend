@@ -320,4 +320,9 @@ public void bookingConfirmationMail(String toEmail, String donorName, String boo
     );
 }
 
+@Async
+public void visitCompletedMail(String Email,String donorName, String status, String bookingId, String date,String orpname){
+        sendEmail(Email, "Your Visit Has Been Completed", EmailMessages.visitCompletedTemplate(donorName, status, bookingId, date, orpname));
+}
+
 }

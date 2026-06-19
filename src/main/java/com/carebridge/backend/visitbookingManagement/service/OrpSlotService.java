@@ -2,6 +2,7 @@ package com.carebridge.backend.visitbookingManagement.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -392,5 +393,127 @@ public class OrpSlotService {
         }
         slotRepo.deleteBySlotId(id);
         return new SlotResponse("Slot deleted success",id);
+    }
+
+
+    public List<VisitBooking> getAllApprovedSlots(){
+         Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        String email = authentication.getName();
+
+        User user =
+                userRepository
+                        .findByEmail(email)
+                        .orElseThrow(() ->
+                                new UserNotFoundException(
+                                        "User not found"
+                                ));
+
+        OrphanageProfile orphanage =
+                orphanageProfileRepository
+                        .findByUser(user)
+                        .orElseThrow(() ->
+                                new OrphanageProfileNotFoundException(
+                                        "Orphanage not found"
+                                ));
+        if(orphanage.getVerificationStatus() != VerificationStatus.VERIFIED){
+                throw new CommonException("Orp Profile not yet verified");
+        }
+
+        List<VisitBooking> approvedVisits1 = visitBookingRepo.findByOrphanageCareBridgeIdAndBookingStatus(orphanage.getCarebridgeId(),VisitBookingStatus.CONFIRMED);
+         List<VisitBooking> approvedVisits2 = visitBookingRepo.findByOrphanageCareBridgeIdAndBookingStatus(orphanage.getCarebridgeId(),VisitBookingStatus.COMPLETED);
+          List<VisitBooking> approvedVisits3 = visitBookingRepo.findByOrphanageCareBridgeIdAndBookingStatus(orphanage.getCarebridgeId(),VisitBookingStatus.NOT_VISITED);
+
+          List<VisitBooking> combined = new ArrayList<>();
+          combined.addAll(approvedVisits1);
+          combined.addAll(approvedVisits2);
+          combined.addAll(approvedVisits3);
+
+
+
+        return combined;
+    }
+
+
+    public SlotResponse markAsCompleted(String id){
+         Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        String email = authentication.getName();
+
+        User user =
+                userRepository
+                        .findByEmail(email)
+                        .orElseThrow(() ->
+                                new UserNotFoundException(
+                                        "User not found"
+                                ));
+
+        OrphanageProfile orphanage =
+                orphanageProfileRepository
+                        .findByUser(user)
+                        .orElseThrow(() ->
+                                new OrphanageProfileNotFoundException(
+                                        "Orphanage not found"
+                                ));
+        if(orphanage.getVerificationStatus() != VerificationStatus.VERIFIED){
+                throw new CommonException("Orp Profile not yet verified");
+        }
+
+        VisitBooking visit = visitBookingRepo.findByBookingIdAndOrphanageCareBridgeId(id,orphanage.getCarebridgeId()).orElseThrow(()-> new CommonException("visit not found"));
+        visit.setBookingStatus(VisitBookingStatus.COMPLETED);
+        visitBookingRepo.save(visit);
+        String donorId = visit.getDonorCareBridgeId();
+        DonorProfile donor = donorProfileRepository.findByCareBridgeID(donorId).orElseThrow(()-> new CommonException("donor not found"));
+        String donorEmail = donor.getUser().getEmail();
+        String donorName = donor.getName();
+        String date = visit.getUpdatedAt().toString();
+        String orpname = orphanage.getOrphanageName();
+
+        emailService.visitCompletedMail(donorEmail, donorName, "COMPLETED", id, date, orpname);
+
+        return new SlotResponse("Marked as completed",id);
+
+    }
+
+     public SlotResponse markAsNotVisited(String id){
+         Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        String email = authentication.getName();
+
+        User user =
+                userRepository
+                        .findByEmail(email)
+                        .orElseThrow(() ->
+                                new UserNotFoundException(
+                                        "User not found"
+                                ));
+
+        OrphanageProfile orphanage =
+                orphanageProfileRepository
+                        .findByUser(user)
+                        .orElseThrow(() ->
+                                new OrphanageProfileNotFoundException(
+                                        "Orphanage not found"
+                                ));
+        if(orphanage.getVerificationStatus() != VerificationStatus.VERIFIED){
+                throw new CommonException("Orp Profile not yet verified");
+        }
+
+        VisitBooking visit = visitBookingRepo.findByBookingIdAndOrphanageCareBridgeId(id,orphanage.getCarebridgeId()).orElseThrow(()-> new CommonException("visit not found"));
+        visit.setBookingStatus(VisitBookingStatus.NOT_VISITED);
+        visitBookingRepo.save(visit);
+      
+
+        return new SlotResponse("Marked as Not Visited",id);
+
     }
 }

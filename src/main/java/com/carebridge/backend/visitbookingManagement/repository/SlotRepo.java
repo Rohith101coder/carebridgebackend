@@ -109,6 +109,25 @@ List<Slot> findByOrphanageCareBridgeIdAndSlotStatus(String orphanageCareBridgeId
 
 Optional<Slot>  findBySlotId(String slotId);
 
+void deleteBySlotId(String slotId);
+
 // Optional<Slot> findBySlotId(String slotId);
+
+
+@Query("""
+    SELECT s
+    FROM Slot s
+    WHERE s.orphanageCareBridgeId = :carebridgeId
+    AND (
+        s.date > :today
+        OR (s.date = :today AND s.startTime > :currentTime)
+    )
+    ORDER BY s.date ASC, s.startTime ASC
+""")
+List<Slot> findFutureSlots(
+        @Param("carebridgeId") String carebridgeId,
+        @Param("today") LocalDate today,
+        @Param("currentTime") LocalTime currentTime
+);
 
 }

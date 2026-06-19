@@ -3,6 +3,7 @@ package com.carebridge.backend.visitbookingManagement.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import com.carebridge.backend.visitbookingManagement.dto.BookingRejectionRequest
 import com.carebridge.backend.visitbookingManagement.dto.SlotRequest;
 import com.carebridge.backend.visitbookingManagement.dto.SlotResponse;
 import com.carebridge.backend.visitbookingManagement.dto.VisitBookingResponse;
+import com.carebridge.backend.visitbookingManagement.entity.Slot;
 import com.carebridge.backend.visitbookingManagement.entity.VisitBooking;
 import com.carebridge.backend.visitbookingManagement.service.OrpSlotService;
 import com.carebridge.backend.visitbookingManagement.service.SlotService;
@@ -37,8 +39,20 @@ public class SlotController {
         return ResponseEntity.ok(response);
     }
 
+      @GetMapping("/allSlots")
+    public ResponseEntity<List<Slot>> getOrpSlots(){
+        List<Slot> futureSlots = orpSlotService.getOrpSlots();
+        return ResponseEntity.ok(futureSlots);
+    }
 
-     @GetMapping("/pending")
+    @DeleteMapping("/deleteSlot/{id}")
+    public ResponseEntity<SlotResponse> deleteSlot(@PathVariable String id){
+        SlotResponse response = orpSlotService.deleteSlot(id);
+        return ResponseEntity.ok(response);
+    }
+
+
+     @GetMapping("/bookings")
     public ResponseEntity<List<VisitBooking>> getPendingBookings(){
 
         List<VisitBooking> response =
@@ -46,6 +60,8 @@ public class SlotController {
 
         return ResponseEntity.ok(response);
     }
+
+  
 
      @PatchMapping("/confirm/{bookingId}")
     public ResponseEntity<VisitBookingResponse> confirmBooking(

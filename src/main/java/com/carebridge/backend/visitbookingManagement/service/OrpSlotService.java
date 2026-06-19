@@ -1,5 +1,7 @@
 package com.carebridge.backend.visitbookingManagement.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.authManagement.exception.UserNotFoundException;
 import com.carebridge.backend.authManagement.repository.UserRepository;
+import com.carebridge.backend.common.enums.VerificationStatus;
 import com.carebridge.backend.donorManagement.entity.DonorProfile;
 import com.carebridge.backend.donorManagement.exception.DonorProfileNotFoundException;
 import com.carebridge.backend.donorManagement.repository.DonorProfileRepository;
@@ -18,6 +21,7 @@ import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 import com.carebridge.backend.orphanageManagement.exception.OrphanageProfileNotFoundException;
 import com.carebridge.backend.orphanageManagement.repository.OrphanageProfileRepository;
 import com.carebridge.backend.visitbookingManagement.dto.BookingRejectionRequest;
+import com.carebridge.backend.visitbookingManagement.dto.SlotResponse;
 import com.carebridge.backend.visitbookingManagement.dto.VisitBookingResponse;
 import com.carebridge.backend.visitbookingManagement.entity.Slot;
 import com.carebridge.backend.visitbookingManagement.entity.VisitBooking;
@@ -319,5 +323,73 @@ public class OrpSlotService {
                 "Booking rejected successfully",
                 bookingId
         );
+    }
+
+
+    public List<Slot> getOrpSlots(){
+
+          Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        String email = authentication.getName();
+
+        User user =
+                userRepository
+                        .findByEmail(email)
+                        .orElseThrow(() ->
+                                new UserNotFoundException(
+                                        "User not found"
+                                ));
+
+        OrphanageProfile orphanage =
+                orphanageProfileRepository
+                        .findByUser(user)
+                        .orElseThrow(() ->
+                                new OrphanageProfileNotFoundException(
+                                        "Orphanage not found"
+                                ));
+        if(orphanage.getVerificationStatus() != VerificationStatus.VERIFIED){
+                throw new CommonException("Orp Profile not yet verified");
+        }
+
+      List<Slot> futureSlots = slotRepo.findFutureSlots(
+        orphanage.getCarebridgeId(),
+        LocalDate.now(),
+        LocalTime.now()
+                );
+        
+        return futureSlots;
+    }
+
+    public SlotResponse deleteSlot(String id){
+          Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        String email = authentication.getName();
+
+        User user =
+                userRepository
+                        .findByEmail(email)
+                        .orElseThrow(() ->
+                                new UserNotFoundException(
+                                        "User not found"
+                                ));
+
+        OrphanageProfile orphanage =
+                orphanageProfileRepository
+                        .findByUser(user)
+                        .orElseThrow(() ->
+                                new OrphanageProfileNotFoundException(
+                                        "Orphanage not found"
+                                ));
+        if(orphanage.getVerificationStatus() != VerificationStatus.VERIFIED){
+                throw new CommonException("Orp Profile not yet verified");
+        }
+        slotRepo.deleteBySlotId(id);
+        return new SlotResponse("Slot deleted success",id);
     }
 }

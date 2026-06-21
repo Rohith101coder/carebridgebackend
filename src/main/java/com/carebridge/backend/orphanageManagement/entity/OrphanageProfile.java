@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import com.carebridge.backend.authManagement.entity.User;
 import com.carebridge.backend.common.enums.VerificationStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -115,6 +116,7 @@ public class OrphanageProfile {
 
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
+    @JsonIgnore
     private User user;
 
 

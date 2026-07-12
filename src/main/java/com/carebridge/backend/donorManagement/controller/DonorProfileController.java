@@ -2,6 +2,7 @@ package com.carebridge.backend.donorManagement.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.carebridge.backend.donorManagement.dto.DonorProfileRequest;
+import com.carebridge.backend.donorManagement.dto.DonorProfileResponseDto;
 import com.carebridge.backend.donorManagement.dto.DonorProfileUpdateRequest;
 import com.carebridge.backend.donorManagement.dto.DonorResponse;
 import com.carebridge.backend.donorManagement.service.DonorProfileService;
@@ -49,4 +51,10 @@ public class DonorProfileController {
         DonorResponse response = donorProfileService.updateDonorProfile(request);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/profile")
+public ResponseEntity<DonorProfileResponseDto> getDonorProfile() {
+
+    return ResponseEntity.ok(donorProfileService.getDonorProfile());
+}
 }

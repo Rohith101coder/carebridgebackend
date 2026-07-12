@@ -16,6 +16,7 @@ import com.carebridge.backend.common.enums.DonorSubscriptionStatus;
 import com.carebridge.backend.common.enums.VerificationStatus;
 import com.carebridge.backend.common.service.ImageUploadService;
 import com.carebridge.backend.donorManagement.dto.DonorProfileRequest;
+import com.carebridge.backend.donorManagement.dto.DonorProfileResponseDto;
 import com.carebridge.backend.donorManagement.dto.DonorProfileUpdateRequest;
 import com.carebridge.backend.donorManagement.dto.DonorResponse;
 import com.carebridge.backend.donorManagement.entity.DonorProfile;
@@ -213,5 +214,43 @@ if(panPhotoFuture != null){
 
         return new DonorResponse("Donor Profile updated successfully");
     }
+
+  
+public DonorProfileResponseDto getDonorProfile() {
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User not found"));
+
+        DonorProfile donorProfile = donorProfileRepository.findByUser(user).orElseThrow(()-> new DonorProfileNotFoundException("Donor profile not found"));
+
+   
+
+    DonorProfileResponseDto response = DonorProfileResponseDto.builder()
+            .id(donorProfile.getId())
+            .name(donorProfile.getName())
+            .dateOfBirth(donorProfile.getDateOfBirth())
+            .designation(donorProfile.getDesignation())
+            .houseNum(donorProfile.getHouseNum())
+            .careBridgeID(donorProfile.getCareBridgeID())
+            .village(donorProfile.getVillage())
+            .mandal(donorProfile.getMandal())
+            .district(donorProfile.getDistrict())
+            .state(donorProfile.getState())
+            .country(donorProfile.getCountry())
+            .phone(donorProfile.getPhone())
+            .profilePic(donorProfile.getProfilePic())
+            .panNumber(donorProfile.getPanNumber())
+            .panPhoto(donorProfile.getPanPhoto())
+            .donorStatus(donorProfile.getDonorStatus())
+            .subscriptionStatus(donorProfile.getSubscriptionStatus())
+            .createdAt(donorProfile.getCreatedAt())
+            .updatedAt(donorProfile.getUpdatedAt())
+            .build();
+
+    return response;
+}
 
 }

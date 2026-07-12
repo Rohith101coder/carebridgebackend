@@ -30,10 +30,10 @@ findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
         List<VisitBookingStatus> statuses,
         Pageable pageable);
 
-        List<VisitBooking>
-findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
-        String donorId,
-        VisitBookingStatus statuses);
+       List<VisitBooking> findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
+        String donorCareBridgeId,
+        VisitBookingStatus bookingStatus
+);
 
 
         long countByOrphanageCareBridgeId(String orphanageCareBridgeId);

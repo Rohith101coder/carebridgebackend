@@ -248,7 +248,7 @@ public List<VisitBookingDTO> getMyPendingBookings() {
             .orElseThrow(() -> new RuntimeException("Donor profile not found"));
 
     List<VisitBooking> visitsData = visitBookingRepo
-            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+            .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
                     donor.getCareBridgeID(),
                     VisitBookingStatus.PENDING
             );
@@ -285,7 +285,7 @@ public List<VisitBookingDTO> getMyConfirmedBookings() {
             .orElseThrow(() -> new RuntimeException("Donor profile not found"));
 
     List<VisitBooking> visitsData = visitBookingRepo
-            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+            .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
                     donor.getCareBridgeID(),
                     VisitBookingStatus.CONFIRMED
             );
@@ -321,7 +321,7 @@ public List<VisitBookingDTO> getMyCompletedBookings() {
             .orElseThrow(() -> new RuntimeException("Donor profile not found"));
 
     List<VisitBooking> visitsData = visitBookingRepo
-            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+            .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
                     donor.getCareBridgeID(),
                     VisitBookingStatus.COMPLETED
             );
@@ -357,7 +357,7 @@ public List<VisitBookingDTO> getMyCancelledBookings() {
             .orElseThrow(() -> new RuntimeException("Donor profile not found"));
 
     List<VisitBooking> visitsData = visitBookingRepo
-            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+            .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
                     donor.getCareBridgeID(),
                     VisitBookingStatus.CANCELLED
             );
@@ -393,7 +393,7 @@ public List<VisitBookingDTO> getMyRejectedBookings() {
             .orElseThrow(() -> new RuntimeException("Donor profile not found"));
 
     List<VisitBooking> visitsData = visitBookingRepo
-            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+            .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
                     donor.getCareBridgeID(),
                     VisitBookingStatus.REJECTED
             );
@@ -430,7 +430,7 @@ public List<VisitBookingDTO> getMyNotVisitedBookings() {
             .orElseThrow(() -> new RuntimeException("Donor profile not found"));
 
     List<VisitBooking> visitsData = visitBookingRepo
-            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+            .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
                     donor.getCareBridgeID(),
                     VisitBookingStatus.NOT_VISITED
             );

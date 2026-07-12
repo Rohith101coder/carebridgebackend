@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.domain.PageRequest;
+// import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -240,12 +240,27 @@ public VisitBookingResponse createVisitBooking(
 public List<VisitBookingDTO> getMyPendingBookings() {
 
     Authentication authentication =
-            SecurityContextHolder.getContext().getAuthentication();
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
 
-    User user = (User) authentication.getPrincipal();
+    String email = authentication.getName();
 
-    DonorProfile donor = donorProfileRepository.findByUser(user)
-            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+    User user =
+            userRepository
+                    .findByEmail(email)
+                    .orElseThrow(() ->
+                            new UserNotFoundException(
+                                    "User not found"
+                            ));
+
+    DonorProfile donor =
+            donorProfileRepository
+                    .findByUser(user)
+                    .orElseThrow(() ->
+                            new DonorProfileNotFoundException(
+                                    "Donor not found"
+                            ));
 
     List<VisitBooking> visitsData = visitBookingRepo
             .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
@@ -277,12 +292,27 @@ public List<VisitBookingDTO> getMyPendingBookings() {
 public List<VisitBookingDTO> getMyConfirmedBookings() {
 
     Authentication authentication =
-            SecurityContextHolder.getContext().getAuthentication();
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
 
-    User user = (User) authentication.getPrincipal();
+    String email = authentication.getName();
 
-    DonorProfile donor = donorProfileRepository.findByUser(user)
-            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+    User user =
+            userRepository
+                    .findByEmail(email)
+                    .orElseThrow(() ->
+                            new UserNotFoundException(
+                                    "User not found"
+                            ));
+
+    DonorProfile donor =
+            donorProfileRepository
+                    .findByUser(user)
+                    .orElseThrow(() ->
+                            new DonorProfileNotFoundException(
+                                    "Donor not found"
+                            ));
 
     List<VisitBooking> visitsData = visitBookingRepo
             .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
@@ -313,13 +343,27 @@ public List<VisitBookingDTO> getMyConfirmedBookings() {
 public List<VisitBookingDTO> getMyCompletedBookings() {
 
     Authentication authentication =
-            SecurityContextHolder.getContext().getAuthentication();
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
 
-    User user = (User) authentication.getPrincipal();
+    String email = authentication.getName();
 
-    DonorProfile donor = donorProfileRepository.findByUser(user)
-            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+    User user =
+            userRepository
+                    .findByEmail(email)
+                    .orElseThrow(() ->
+                            new UserNotFoundException(
+                                    "User not found"
+                            ));
 
+    DonorProfile donor =
+            donorProfileRepository
+                    .findByUser(user)
+                    .orElseThrow(() ->
+                            new DonorProfileNotFoundException(
+                                    "Donor not found"
+                            ));
     List<VisitBooking> visitsData = visitBookingRepo
             .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
                     donor.getCareBridgeID(),
@@ -349,12 +393,27 @@ public List<VisitBookingDTO> getMyCompletedBookings() {
 public List<VisitBookingDTO> getMyCancelledBookings() {
 
     Authentication authentication =
-            SecurityContextHolder.getContext().getAuthentication();
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
 
-    User user = (User) authentication.getPrincipal();
+    String email = authentication.getName();
 
-    DonorProfile donor = donorProfileRepository.findByUser(user)
-            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+    User user =
+            userRepository
+                    .findByEmail(email)
+                    .orElseThrow(() ->
+                            new UserNotFoundException(
+                                    "User not found"
+                            ));
+
+    DonorProfile donor =
+            donorProfileRepository
+                    .findByUser(user)
+                    .orElseThrow(() ->
+                            new DonorProfileNotFoundException(
+                                    "Donor not found"
+                            ));
 
     List<VisitBooking> visitsData = visitBookingRepo
             .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
@@ -385,12 +444,27 @@ public List<VisitBookingDTO> getMyCancelledBookings() {
 public List<VisitBookingDTO> getMyRejectedBookings() {
 
     Authentication authentication =
-            SecurityContextHolder.getContext().getAuthentication();
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
 
-    User user = (User) authentication.getPrincipal();
+    String email = authentication.getName();
 
-    DonorProfile donor = donorProfileRepository.findByUser(user)
-            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+    User user =
+            userRepository
+                    .findByEmail(email)
+                    .orElseThrow(() ->
+                            new UserNotFoundException(
+                                    "User not found"
+                            ));
+
+    DonorProfile donor =
+            donorProfileRepository
+                    .findByUser(user)
+                    .orElseThrow(() ->
+                            new DonorProfileNotFoundException(
+                                    "Donor not found"
+                            ));
 
     List<VisitBooking> visitsData = visitBookingRepo
             .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
@@ -422,13 +496,27 @@ public List<VisitBookingDTO> getMyRejectedBookings() {
 public List<VisitBookingDTO> getMyNotVisitedBookings() {
 
     Authentication authentication =
-            SecurityContextHolder.getContext().getAuthentication();
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
 
-    User user = (User) authentication.getPrincipal();
+    String email = authentication.getName();
 
-    DonorProfile donor = donorProfileRepository.findByUser(user)
-            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+    User user =
+            userRepository
+                    .findByEmail(email)
+                    .orElseThrow(() ->
+                            new UserNotFoundException(
+                                    "User not found"
+                            ));
 
+    DonorProfile donor =
+            donorProfileRepository
+                    .findByUser(user)
+                    .orElseThrow(() ->
+                            new DonorProfileNotFoundException(
+                                    "Donor not found"
+                            ));
     List<VisitBooking> visitsData = visitBookingRepo
             .findByDonorCareBridgeIdAndBookingStatusOrderByCreatedAtAsc(
                     donor.getCareBridgeID(),

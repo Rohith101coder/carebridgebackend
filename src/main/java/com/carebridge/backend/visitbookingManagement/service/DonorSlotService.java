@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import com.carebridge.backend.notificationManagement.service.EmailService;
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
 import com.carebridge.backend.orphanageManagement.repository.OrphanageProfileRepository;
 import com.carebridge.backend.visitbookingManagement.dto.DonorSlot;
+import com.carebridge.backend.visitbookingManagement.dto.VisitBookingDTO;
 import com.carebridge.backend.visitbookingManagement.dto.VisitBookingRequest;
 import com.carebridge.backend.visitbookingManagement.dto.VisitBookingResponse;
 import com.carebridge.backend.visitbookingManagement.entity.Slot;
@@ -203,9 +205,9 @@ public VisitBookingResponse createVisitBooking(
             request.getNumberOfVisitors()
     );
 
-    System.out.println("-------------------------");
-    System.out.println(slot.getBookedCount());
-    System.out.println("-----------------------------");
+//     System.out.println("-------------------------");
+//     System.out.println(slot.getBookedCount());
+//     System.out.println("-----------------------------");
 
 
 
@@ -232,6 +234,227 @@ public VisitBookingResponse createVisitBooking(
 
     return new VisitBookingResponse("Visit booking created successfully", bookingId);
 }
+
+
+
+public List<VisitBookingDTO> getMyPendingBookings() {
+
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+
+    User user = (User) authentication.getPrincipal();
+
+    DonorProfile donor = donorProfileRepository.findByUser(user)
+            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+
+    List<VisitBooking> visitsData = visitBookingRepo
+            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+                    donor.getCareBridgeID(),
+                    VisitBookingStatus.PENDING
+            );
+
+    List<VisitBookingDTO> response = new ArrayList<>();
+
+    for (VisitBooking visit : visitsData) {
+
+        VisitBookingDTO dto = new VisitBookingDTO();
+
+        dto.setBookingId(visit.getBookingId());
+        dto.setSlotId(visit.getSlotId());
+        dto.setOrphanageCareBridgeId(visit.getOrphanageCareBridgeId());
+        dto.setNumberOfVisitors(visit.getNumberOfVisitors());
+        dto.setMessage(visit.getMessage());
+        dto.setBookingStatus(visit.getBookingStatus());
+        dto.setCreatedAt(visit.getCreatedAt());
+
+        response.add(dto);
+    }
+
+    return response;
+}
+
+
+public List<VisitBookingDTO> getMyConfirmedBookings() {
+
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+
+    User user = (User) authentication.getPrincipal();
+
+    DonorProfile donor = donorProfileRepository.findByUser(user)
+            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+
+    List<VisitBooking> visitsData = visitBookingRepo
+            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+                    donor.getCareBridgeID(),
+                    VisitBookingStatus.CONFIRMED
+            );
+
+    List<VisitBookingDTO> response = new ArrayList<>();
+
+    for (VisitBooking visit : visitsData) {
+
+        VisitBookingDTO dto = new VisitBookingDTO();
+
+        dto.setBookingId(visit.getBookingId());
+        dto.setSlotId(visit.getSlotId());
+        dto.setOrphanageCareBridgeId(visit.getOrphanageCareBridgeId());
+        dto.setNumberOfVisitors(visit.getNumberOfVisitors());
+        dto.setMessage(visit.getMessage());
+        dto.setBookingStatus(visit.getBookingStatus());
+        dto.setCreatedAt(visit.getCreatedAt());
+
+        response.add(dto);
+    }
+
+    return response;
+}
+
+public List<VisitBookingDTO> getMyCompletedBookings() {
+
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+
+    User user = (User) authentication.getPrincipal();
+
+    DonorProfile donor = donorProfileRepository.findByUser(user)
+            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+
+    List<VisitBooking> visitsData = visitBookingRepo
+            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+                    donor.getCareBridgeID(),
+                    VisitBookingStatus.COMPLETED
+            );
+
+    List<VisitBookingDTO> response = new ArrayList<>();
+
+    for (VisitBooking visit : visitsData) {
+
+        VisitBookingDTO dto = new VisitBookingDTO();
+
+        dto.setBookingId(visit.getBookingId());
+        dto.setSlotId(visit.getSlotId());
+        dto.setOrphanageCareBridgeId(visit.getOrphanageCareBridgeId());
+        dto.setNumberOfVisitors(visit.getNumberOfVisitors());
+        dto.setMessage(visit.getMessage());
+        dto.setBookingStatus(visit.getBookingStatus());
+        dto.setCreatedAt(visit.getCreatedAt());
+
+        response.add(dto);
+    }
+
+    return response;
+}
+
+public List<VisitBookingDTO> getMyCancelledBookings() {
+
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+
+    User user = (User) authentication.getPrincipal();
+
+    DonorProfile donor = donorProfileRepository.findByUser(user)
+            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+
+    List<VisitBooking> visitsData = visitBookingRepo
+            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+                    donor.getCareBridgeID(),
+                    VisitBookingStatus.CANCELLED
+            );
+
+    List<VisitBookingDTO> response = new ArrayList<>();
+
+    for (VisitBooking visit : visitsData) {
+
+        VisitBookingDTO dto = new VisitBookingDTO();
+
+        dto.setBookingId(visit.getBookingId());
+        dto.setSlotId(visit.getSlotId());
+        dto.setOrphanageCareBridgeId(visit.getOrphanageCareBridgeId());
+        dto.setNumberOfVisitors(visit.getNumberOfVisitors());
+        dto.setMessage(visit.getMessage());
+        dto.setBookingStatus(visit.getBookingStatus());
+        dto.setCreatedAt(visit.getCreatedAt());
+
+        response.add(dto);
+    }
+
+    return response;
+}
+
+public List<VisitBookingDTO> getMyRejectedBookings() {
+
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+
+    User user = (User) authentication.getPrincipal();
+
+    DonorProfile donor = donorProfileRepository.findByUser(user)
+            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+
+    List<VisitBooking> visitsData = visitBookingRepo
+            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+                    donor.getCareBridgeID(),
+                    VisitBookingStatus.REJECTED
+            );
+
+    List<VisitBookingDTO> response = new ArrayList<>();
+
+    for (VisitBooking visit : visitsData) {
+
+        VisitBookingDTO dto = new VisitBookingDTO();
+
+        dto.setBookingId(visit.getBookingId());
+        dto.setSlotId(visit.getSlotId());
+        dto.setOrphanageCareBridgeId(visit.getOrphanageCareBridgeId());
+        dto.setNumberOfVisitors(visit.getNumberOfVisitors());
+        dto.setMessage(visit.getMessage());
+        dto.setBookingStatus(visit.getBookingStatus());
+        dto.setCreatedAt(visit.getCreatedAt());
+
+        response.add(dto);
+    }
+
+    return response;
+}
+
+
+public List<VisitBookingDTO> getMyNotVisitedBookings() {
+
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+
+    User user = (User) authentication.getPrincipal();
+
+    DonorProfile donor = donorProfileRepository.findByUser(user)
+            .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+
+    List<VisitBooking> visitsData = visitBookingRepo
+            .findByDonorCareBridgeIdAndBookingStatusInOrderByCreatedAtAsc(
+                    donor.getCareBridgeID(),
+                    VisitBookingStatus.NOT_VISITED
+            );
+
+    List<VisitBookingDTO> response = new ArrayList<>();
+
+    for (VisitBooking visit : visitsData) {
+
+        VisitBookingDTO dto = new VisitBookingDTO();
+
+        dto.setBookingId(visit.getBookingId());
+        dto.setSlotId(visit.getSlotId());
+        dto.setOrphanageCareBridgeId(visit.getOrphanageCareBridgeId());
+        dto.setNumberOfVisitors(visit.getNumberOfVisitors());
+        dto.setMessage(visit.getMessage());
+        dto.setBookingStatus(visit.getBookingStatus());
+        dto.setCreatedAt(visit.getCreatedAt());
+
+        response.add(dto);
+    }
+
+    return response;
+}
+
 
 
 

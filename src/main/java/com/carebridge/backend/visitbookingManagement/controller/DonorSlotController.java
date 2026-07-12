@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.carebridge.backend.visitbookingManagement.dto.DonorSlot;
+import com.carebridge.backend.visitbookingManagement.dto.VisitBookingDTO;
 import com.carebridge.backend.visitbookingManagement.dto.VisitBookingRequest;
 import com.carebridge.backend.visitbookingManagement.dto.VisitBookingResponse;
 import com.carebridge.backend.visitbookingManagement.service.DonorSlotService;
@@ -49,6 +50,49 @@ public class DonorSlotController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/pending-bookings")
+    public ResponseEntity<List<VisitBookingDTO>> getPendings(){
+
+        List<VisitBookingDTO> res= donorSlotService.getMyPendingBookings();
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/confirmed-bookings")
+    public ResponseEntity<List<VisitBookingDTO>> getconfirmed(){
+
+        List<VisitBookingDTO> res= donorSlotService.getMyConfirmedBookings();
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/cancelled-bookings")
+    public ResponseEntity<List<VisitBookingDTO>> getCancelled(){
+
+        List<VisitBookingDTO> res= donorSlotService.getMyCancelledBookings();
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/rejected-bookings")
+    public ResponseEntity<List<VisitBookingDTO>> getrejected(){
+
+        List<VisitBookingDTO> res= donorSlotService.getMyRejectedBookings();
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/notvisited-bookings")
+    public ResponseEntity<List<VisitBookingDTO>> getNotvisited(){
+
+        List<VisitBookingDTO> res= donorSlotService.getMyNotVisitedBookings();
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/completed-bookings")
+    public ResponseEntity<List<VisitBookingDTO>> getCompletes(){
+
+        List<VisitBookingDTO> res= donorSlotService.getMyCompletedBookings();
+        return ResponseEntity.ok(res);
+    }
+    
 
 
 

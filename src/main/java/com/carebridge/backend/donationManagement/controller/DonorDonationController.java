@@ -82,7 +82,7 @@ public ResponseEntity<DonationResponse> donate(
     @GetMapping("/delivered-donations")
     public ResponseEntity<List<DonationDTO>> getMyDeliveredDonations(){
 
-        List<DonationDTO> delivered = donorDonationService.getMyCancelledDonations();
+        List<DonationDTO> delivered = donorDonationService.getMyDeliveredDonations();
 
         return ResponseEntity.ok(delivered);
     }

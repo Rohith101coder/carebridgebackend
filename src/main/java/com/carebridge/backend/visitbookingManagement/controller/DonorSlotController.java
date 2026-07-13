@@ -39,7 +39,6 @@ public class DonorSlotController {
        @PostMapping("/book")
     public ResponseEntity<VisitBookingResponse> bookVisit(
 
-         
             @RequestBody
             VisitBookingRequest request
     ){

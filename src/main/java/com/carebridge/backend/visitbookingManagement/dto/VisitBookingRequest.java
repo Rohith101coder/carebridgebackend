@@ -7,10 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 public class VisitBookingRequest {
 
-   
     private String slotId;
 
-   
     private Integer numberOfVisitors;
 
     private String message;

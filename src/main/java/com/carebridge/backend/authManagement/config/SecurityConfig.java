@@ -36,7 +36,6 @@ public CorsConfigurationSource corsConfigurationSource() {
             "https://carebridge-22a92.web.app",
             "https://rmm3t6k1-5173.inc1.devtunnels.ms/",
             "https://carebridge-drab.vercel.app/"
-            
     ));
 
     configuration.setAllowedMethods(List.of("*"));

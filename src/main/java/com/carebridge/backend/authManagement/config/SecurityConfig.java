@@ -51,6 +51,7 @@ public CorsConfigurationSource corsConfigurationSource() {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+        System.out.println("hello request entered security pool");
         http
         .csrf(csrf -> csrf.disable())
         .cors(cors -> {})

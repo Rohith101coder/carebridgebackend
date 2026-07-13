@@ -42,7 +42,7 @@ public class FetchSlotsService {
                 slotDTO.setStartTime(slot.getStartTime().toString());
                 slotDTO.setEndTime(slot.getEndTime().toString());
                 slotDTO.setCapacity(slot.getMaxVisitors().toString());
-                slotDTO.setAvailableSeats(slot.getBookedCount().toString());
+                slotDTO.setAvailableSeats((slot.getMaxVisitors() - slot.getBookedCount())+"");
                 slotDTO.setIsBooked(slot.getSlotStatus().name());
                 slotList.add(slotDTO);
             }

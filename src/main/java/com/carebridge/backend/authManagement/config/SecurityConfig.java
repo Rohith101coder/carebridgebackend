@@ -28,6 +28,7 @@ public class SecurityConfig {
 
     @Bean
 public CorsConfigurationSource corsConfigurationSource() {
+     System.out.println("hello request entered cors");
 
     CorsConfiguration configuration = new CorsConfiguration();
 
@@ -38,6 +39,7 @@ public CorsConfigurationSource corsConfigurationSource() {
             "https://carebridge-drab.vercel.app/"
     ));
 
+     System.out.println("hello request crossed cors");
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
 
@@ -45,13 +47,14 @@ public CorsConfigurationSource corsConfigurationSource() {
             new UrlBasedCorsConfigurationSource();
 
     source.registerCorsConfiguration("/**", configuration);
+     System.out.println("hello request ending");
 
     return source;
 }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        System.out.println("hello request entered security pool");
+       
         http
         .csrf(csrf -> csrf.disable())
         .cors(cors -> {})

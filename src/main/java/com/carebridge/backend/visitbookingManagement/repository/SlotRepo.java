@@ -95,6 +95,7 @@ List<Slot> findByOrphanageCareBridgeIdAndSlotStatus(String orphanageCareBridgeId
 
 
 
+
 //     @Lock(LockModeType.PESSIMISTIC_WRITE)
 
 // @Query("""

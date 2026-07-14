@@ -159,7 +159,7 @@ public void rejectOrpNotification(
 }
 
 @Async
-public void donationInitiated(String toEmail, String donorId, String donorName, String donorPhone, String modeOfDonation, String donationId, String needItemId, String needItemName, String expectedDonationDate, String expectedDeliveryDate, String remainingQuantity, String donorDonationQuantity, String updatedRemainingQuantity) {
+public void donationInitiated(String toEmail, String donorId, String donorName, String donorPhone, String modeOfDonation, String donationId, String needItemId, String needItemName, String expectedDonationDate, String expectedDeliveryDate, String remainingQuantity, String donorDonationQuantity, String updatedRemainingQuantity, String orderProofURL) {
 
     sendEmail(
             toEmail,
@@ -176,7 +176,9 @@ public void donationInitiated(String toEmail, String donorId, String donorName, 
                     expectedDeliveryDate,
                     remainingQuantity,
                     donorDonationQuantity,
-                    updatedRemainingQuantity
+                    updatedRemainingQuantity,
+                    orderProofURL
+
             )
     );
 }

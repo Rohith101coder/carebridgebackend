@@ -780,27 +780,42 @@ public static String donationInitiatedTemplate(
         String expectedDeliveryDate,
         String remainingQuantity,
         String donorDonationQuantity,
-        String updatedRemainingQuantity) {
+        String updatedRemainingQuantity,
+        String orderProofURL) {
 
     String scheduleInfo;
 
     if ("ONLINE_ORDER".equalsIgnoreCase(modeOfDonation)) {
-
         scheduleInfo = """
         <p>
             <strong>Expected Delivery Date:</strong>
             %s
         </p>
         """.formatted(expectedDeliveryDate);
-
     } else {
-
         scheduleInfo = """
         <p>
             <strong>Expected Visit Date:</strong>
             %s
         </p>
         """.formatted(expectedDonationDate);
+    }
+
+    // Conditionally build the order proof image section
+    String imageSection = "";
+    if (orderProofURL != null && !orderProofURL.isBlank()) {
+        imageSection = """
+        <hr>
+        <h3 style="color:#15803d;">Order Proof</h3>
+        <div style="margin-top:15px; text-align:center;">
+            <img src="%s" alt="Order Proof" style="
+                max-width:100%%;
+                height:auto;
+                border-radius:8px;
+                border:1px solid #d1d5db;
+            " />
+        </div>
+        """.formatted(orderProofURL);
     }
 
     return """
@@ -876,6 +891,8 @@ public static String donationInitiatedTemplate(
 
             %s
 
+            %s
+
             <div style="
                 margin-top:25px;
                 background:#f9fafb;
@@ -911,7 +928,8 @@ public static String donationInitiatedTemplate(
             donorDonationQuantity,
             remainingQuantity,
             updatedRemainingQuantity,
-            scheduleInfo
+            scheduleInfo,
+            imageSection
     );
 }
 

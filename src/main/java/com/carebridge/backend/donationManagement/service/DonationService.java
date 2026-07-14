@@ -174,7 +174,7 @@ public class DonationService {
 
 
         //online donation
-
+         CompletableFuture<String> imageUrl = null;
         if(request.getDonationType()
                 == DonationType.ONLINE_ORDER){
 
@@ -193,7 +193,7 @@ public class DonationService {
                 );
             }
 
-            CompletableFuture<String> imageUrl =
+             imageUrl =
                     imageUploadService
                             .uploadImageAsync(
                                     request.getOrderProofImage()
@@ -241,7 +241,7 @@ public class DonationService {
 
 
 
-        emailService.donationInitiated(orpEmail,donorId,donorName,donorPhone,modeOfDonation,donationId,needItemId,needItemName,expectedDonationDate,expectedDeliveryDate,remainingQuantity+"",donorDonationQuantity,remaining);
+        emailService.donationInitiated(orpEmail,donorId,donorName,donorPhone,modeOfDonation,donationId,needItemId,needItemName,expectedDonationDate,expectedDeliveryDate,remainingQuantity+"",donorDonationQuantity,remaining, imageUrl.join());
 
         return new DonationResponse("Donation request created successfully", donationRequestId);
 }

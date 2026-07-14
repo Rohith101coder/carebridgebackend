@@ -21,4 +21,6 @@ public class DonationSummaryDTO {
     private Double amount;
 
     private LocalDateTime donatedAt;
+
+    private String category;
 }

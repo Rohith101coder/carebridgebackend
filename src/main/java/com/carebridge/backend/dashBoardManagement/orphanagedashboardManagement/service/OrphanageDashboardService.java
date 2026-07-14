@@ -22,6 +22,7 @@ import com.carebridge.backend.donationManagement.repository.ItemDeliveredRepo;
 import com.carebridge.backend.donorManagement.entity.DonorProfile;
 import com.carebridge.backend.donorManagement.repository.DonorProfileRepository;
 import com.carebridge.backend.needsManagement.entity.NeedItem;
+import com.carebridge.backend.needsManagement.enums.CategoryType;
 import com.carebridge.backend.needsManagement.exception.CommonException;
 import com.carebridge.backend.needsManagement.repository.NeedItemRepo;
 import com.carebridge.backend.orphanageManagement.entity.OrphanageProfile;
@@ -148,6 +149,7 @@ private OverviewDTO buildOverview(String orphanageCareBridgeId) {
     return OverviewDTO.builder()
              .orphanageName(orphanage.getOrphanageName())
              .adminName(orphanage.getAdminName())
+             .orpAdminPic(orphanage.getAdminProfilePic())
              .careBridgeId(orphanage.getCarebridgeId())
             .childrenCount(orphanage.getNumberOfChildren())
             .activeNeedsCount(activeNeedsCount)
@@ -174,6 +176,7 @@ private List<NeedSummaryDTO> buildActiveNeeds(
                     NeedSummaryDTO.builder()
                             .needId(n.getId())
                             .itemName(n.getName())
+                            .category(n.getCategory().name())
                             .requiredQuantity(n.getQuantity())
                             .receivedQuantity(
                                     n.getFulfilledQuantity())
@@ -217,6 +220,7 @@ private List<VisitSummaryDTO> buildUpcomingVisits(
                         .bookingId(v.getId())
                         .donorName(donorName)
                         .purpose(v.getMessage())
+                
                         .visitDate(
                                 slot != null
                                         ? slot.getDate()
@@ -254,6 +258,8 @@ private List<DonationSummaryDTO> buildRecentDonations(
                                         d.getNeedId())
                                 .map(NeedItem::getName)
                                 .orElse("Unknown Item");
+                
+                NeedItem item = needItemRepository.findByNeedItemId(d.getNeedId()).orElseThrow(()-> new CommonException("item not found"));
 
                 Double amount =
                         needItemRepository
@@ -270,6 +276,7 @@ private List<DonationSummaryDTO> buildRecentDonations(
                 return DonationSummaryDTO.builder()
                         .donationId(d.getId())
                         .donorName(donorName)
+                        .category(item.getCategory().name())
                         .itemName(itemName)
                         .quantity(d.getQuantity())
                         .amount(amount)

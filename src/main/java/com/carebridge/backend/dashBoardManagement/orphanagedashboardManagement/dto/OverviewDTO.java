@@ -13,6 +13,8 @@ public class OverviewDTO {
 
     private String adminName;
 
+    private String orpAdminPic;
+
     private String careBridgeId;
 
     private Integer childrenCount;

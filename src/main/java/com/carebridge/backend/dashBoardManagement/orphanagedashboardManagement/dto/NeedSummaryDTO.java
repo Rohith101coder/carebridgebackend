@@ -21,4 +21,6 @@ public class NeedSummaryDTO {
     private Integer remainingQuantity;
 
     private PriorityLevel priority;
+
+    private String category;
 }

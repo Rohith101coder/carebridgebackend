@@ -77,7 +77,7 @@ public void donorProfileNotification(
     sendEmail(
             toEmail,
             "Thank You for Joining CareBridge",
-            EmailMessages.donorProfilePendingTemplate(donorName)
+            EmailMessages.donorProfileApprovedTemplate(donorName)
     );
 }
 

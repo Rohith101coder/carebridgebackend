@@ -87,7 +87,7 @@ public class EmailMessages {
         """.formatted(otp);
     }
 
-    public static String donorProfilePendingTemplate(String donorName) {
+   public static String donorProfileApprovedTemplate(String donorName) {
 
     return """
     <div style="
@@ -115,7 +115,7 @@ public class EmailMessages {
         <div style="padding:30px;">
 
             <h2 style="color:#111827;">
-                Thank You for Joining CareBridge
+                Welcome to CareBridge!
             </h2>
 
             <p style="color:#374151;">
@@ -123,36 +123,37 @@ public class EmailMessages {
             </p>
 
             <p style="color:#4b5563;">
-                Thank you for completing your donor profile on CareBridge.
-                We truly appreciate your willingness to support and make a
-                positive impact in the lives of children and orphanages.
-            </p>
-
-            <p style="color:#4b5563;">
-                Your profile has been successfully submitted and is currently
-                under verification by our team.
+                Congratulations! Your donor profile has been created successfully.
+                Thank you for joining CareBridge and for your willingness to make
+                a positive impact in the lives of children and orphanages.
             </p>
 
             <div style="
-                background:#fef3c7;
-                color:#92400e;
+                background:#dcfce7;
+                color:#166534;
                 padding:15px;
                 border-radius:8px;
                 margin:20px 0;
                 text-align:center;
                 font-weight:bold;
             ">
-                Profile Status: Pending Verification
+                🎉 Profile Status: Approved
             </div>
 
             <p style="color:#4b5563;">
-                Once the verification process is completed, you will receive
-                another update regarding your approval status.
+                Your account is now active, and you can immediately:
             </p>
 
+            <ul style="color:#4b5563; padding-left:20px;">
+                <li>Book visits to orphanages.</li>
+                <li>Donate to orphanages in need.</li>
+                <li>Manage your donor profile and activities.</li>
+            </ul>
+
             <p style="color:#4b5563;">
-                We are grateful to have compassionate people like you as part
-                of the CareBridge community.
+                Thank you for being a part of the CareBridge community. Your
+                kindness and generosity can make a meaningful difference in the
+                lives of many children.
             </p>
 
             <p style="margin-top:30px;">
@@ -175,7 +176,6 @@ public class EmailMessages {
     </div>
     """.formatted(donorName);
 }
-
 
 public static String orphanageProfilePendingTemplate(
         String orphanageAdminName) {

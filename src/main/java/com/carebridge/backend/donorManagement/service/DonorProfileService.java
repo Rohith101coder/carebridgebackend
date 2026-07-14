@@ -94,7 +94,7 @@ String panPhotoUrl = panPhotoFuture.join();
                 donor.setPanPhoto(panPhotoUrl);
 
             donor.setCareBridgeID(donorId);
-            donor.setDonorStatus(VerificationStatus.PENDING);
+            donor.setDonorStatus(VerificationStatus.VERIFIED);
 
             donor.setSubscriptionStatus(DonorSubscriptionStatus.UNSUBSCRIBED);
            
@@ -104,7 +104,7 @@ String panPhotoUrl = panPhotoFuture.join();
 
             emailService.donorProfileNotification(email, request.getName());
 
-            return new DonorResponse("Donor profile created successfully Status : PENDING");
+            return new DonorResponse("Donor profile created successfully Status");
 
     }
 

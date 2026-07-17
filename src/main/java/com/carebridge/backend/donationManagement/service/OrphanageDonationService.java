@@ -107,6 +107,8 @@ public class OrphanageDonationService {
         response.setFulfilledQuantity(item.getFulfilledQuantity());
         response.setPricePerQuantity(item.getPricePerQuantity());
         response.setProductLinks(item.getProductLinks());
+        System.out.println("Donation ID: " + donation.getDonationRequestId());
+        System.out.println("Donor CareBridge ID: " + donation.getDonorCareBridgeId());
         DonorProfile donor = donorProfileRepository.findByCareBridgeID(donation.getDonorCareBridgeId()).orElseThrow(()-> new CommonException("donor not found"));
         response.setDonorCareBridgeId(donation.getDonorCareBridgeId());
         response.setDonorName(donor.getName());

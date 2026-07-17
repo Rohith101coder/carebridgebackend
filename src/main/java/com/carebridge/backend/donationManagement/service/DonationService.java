@@ -1,7 +1,7 @@
 package com.carebridge.backend.donationManagement.service;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+// import java.util.concurrent.CompletableFuture;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -174,7 +174,7 @@ public class DonationService {
 
 
         //online donation
-         CompletableFuture<String> imageUrl = null;
+       String imageUrl = "";
         if(request.getDonationType()
                 == DonationType.ONLINE_ORDER){
 
@@ -197,10 +197,10 @@ public class DonationService {
                     imageUploadService
                             .uploadImageAsync(
                                     request.getOrderProofImage()
-                            );
+                            ).join();
 
             donation.setOrderProofImageUrl(
-                    imageUrl.join()
+                    imageUrl
             );
 
             donation.setExpectedDeliveryDate(
@@ -241,7 +241,7 @@ public class DonationService {
 
 
 
-        emailService.donationInitiated(orpEmail,donorId,donorName,donorPhone,modeOfDonation,donationId,needItemId,needItemName,expectedDonationDate,expectedDeliveryDate,remainingQuantity+"",donorDonationQuantity,remaining, imageUrl.join());
+        emailService.donationInitiated(orpEmail,donorId,donorName,donorPhone,modeOfDonation,donationId,needItemId,needItemName,expectedDonationDate,expectedDeliveryDate,remainingQuantity+"",donorDonationQuantity,remaining, imageUrl);
 
         return new DonationResponse("Donation request created successfully", donationRequestId);
 }

@@ -36,7 +36,8 @@ public CorsConfigurationSource corsConfigurationSource() {
             "http://localhost:5173",
             "https://carebridge-22a92.web.app",
             "https://rmm3t6k1-5173.inc1.devtunnels.ms/",
-            "https://carebridge-drab.vercel.app/"
+            "https://carebridge-drab.vercel.app/",
+            "https://agenticcarebridge.vercel.app/"
     ));
 
      System.out.println("hello request crossed cors");

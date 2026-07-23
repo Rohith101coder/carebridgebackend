@@ -38,7 +38,8 @@ public CorsConfigurationSource corsConfigurationSource() {
             "https://rmm3t6k1-5173.inc1.devtunnels.ms/",
             "https://carebridge-drab.vercel.app/",
             "https://agenticcarebridge.vercel.app/",
-            "https://carebridgeproagent.vercel.app/"
+            "https://carebridgeproagent.vercel.app/",
+            "https://agenticcarebridge.netlify.app/"
     ));
 
      System.out.println("hello request crossed cors");
